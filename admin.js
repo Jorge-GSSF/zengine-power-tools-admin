@@ -464,9 +464,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-    updateAuthBadge();
-  }
-  }
 
   // 4. TAB NAVIGATION
   navTabs.forEach(tab => {
