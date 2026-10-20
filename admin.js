@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const DEFAULT_ACCESS_TOKEN = '644cc1ee38244d57d7b458eaf29d2b714fb7e267';
-  const DEFAULT_REMOTE_CONFIG_URL = 'https://zengine-power-tools-admin.vercel.app/api/config';
+  const DEFAULT_REMOTE_CONFIG_URL = 'https://jorge-gssf.github.io/zengine-power-tools-admin/config.json';
 
   let currentSettings = {
     autoOpenEnabled: true,
@@ -91,6 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnTestCloudUrl = document.getElementById('btnTestCloudUrl');
   const cloudTestResult = document.getElementById('cloudTestResult');
   const inputAnnouncement = document.getElementById('inputAnnouncement');
+  const inputGhToken = document.getElementById('inputGhToken');
+  const btnSaveGhToken = document.getElementById('btnSaveGhToken');
 
   // Simulator DOM
   const simulatorInput = document.getElementById('mockupSearchInput');
@@ -230,9 +232,10 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const endpoint = (inputCloudUrl && inputCloudUrl.value.trim()) || currentSettings.remoteConfigUrl || '/api/config';
+    const endpoint = (inputCloudUrl && inputCloudUrl.value.trim()) || currentSettings.remoteConfigUrl || DEFAULT_REMOTE_CONFIG_URL;
     const pw = sessionStorage.getItem('zg_admin_pass') || 'georgesnow2026';
     const token = sessionStorage.getItem('zg_admin_session_token') || 'authenticated';
+    const ghToken = localStorage.getItem('zg_gh_token') || (inputGhToken ? inputGhToken.value.trim() : '');
 
     if (btnPublishCloud) {
       btnPublishCloud.disabled = true;
@@ -242,43 +245,104 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     }
 
+    const payloadConfig = {
+      iconStyle: currentSettings.iconStyle,
+      paletteSize: currentSettings.paletteSize,
+      autoOpenEnabled: currentSettings.autoOpenEnabled,
+      apiToken: currentSettings.apiToken,
+      defaultWorkspaceId: currentSettings.defaultWorkspaceId,
+      shortcuts: currentSettings.shortcuts,
+      announcement: currentSettings.announcement || '',
+      version: '1.4.5',
+      updatedAt: new Date().toISOString()
+    };
+
     try {
-      const payload = {
-        config: {
-          iconStyle: currentSettings.iconStyle,
-          paletteSize: currentSettings.paletteSize,
-          autoOpenEnabled: currentSettings.autoOpenEnabled,
-          apiToken: currentSettings.apiToken,
-          defaultWorkspaceId: currentSettings.defaultWorkspaceId,
-          shortcuts: currentSettings.shortcuts,
-          announcement: currentSettings.announcement || ''
-        },
-        adminPassword: pw
-      };
+      let published = false;
 
-      const resp = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-      });
+      // Option A: If GitHub Token is available, push directly to GitHub repository config.json
+      if (ghToken) {
+        try {
+          const repoApiUrl = 'https://api.github.com/repos/Jorge-GSSF/zengine-power-tools-admin/contents/config.json';
+          // 1. Get current SHA
+          const getResp = await fetch(repoApiUrl, {
+            headers: {
+              'Authorization': `token ${ghToken}`,
+              'Accept': 'application/vnd.github.v3+json'
+            }
+          });
+          let sha = '';
+          if (getResp.ok) {
+            const getData = await getResp.json();
+            sha = getData.sha;
+          }
 
-      if (!resp.ok) {
-        const errorData = await resp.json().catch(() => ({}));
-        throw new Error(errorData.error || `Server responded with ${resp.status}`);
+          // 2. Put file with base64 encoded content
+          const contentStr = JSON.stringify(payloadConfig, null, 2);
+          const b64 = btoa(unescape(encodeURIComponent(contentStr)));
+
+          const putResp = await fetch(repoApiUrl, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `token ${ghToken}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/vnd.github.v3+json'
+            },
+            body: JSON.stringify({
+              message: `Update central config via Live Admin Portal (${new Date().toLocaleString()})`,
+              content: b64,
+              sha: sha || undefined
+            })
+          });
+
+          if (!putResp.ok) {
+            const errData = await putResp.json().catch(() => ({}));
+            throw new Error(errData.message || `GitHub error ${putResp.status}`);
+          }
+
+          published = true;
+          showToast('☁ Successfully Published to GitHub Cloud! Extensions will sync.');
+        } catch (ghErr) {
+          console.warn('GitHub API publish failed, trying standard endpoint:', ghErr);
+        }
       }
 
-      const resData = await resp.json();
-      saveSettings(payload.config);
+      // Option B: If not pushed to GitHub, try posting to cloud endpoint
+      if (!published && endpoint && !endpoint.endsWith('.json')) {
+        const resp = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            config: payloadConfig,
+            adminPassword: pw
+          })
+        });
 
-      showToast('☁ Successfully Published to Cloud! All extensions will sync.');
+        if (!resp.ok) {
+          const errorData = await resp.json().catch(() => ({}));
+          throw new Error(errorData.error || `Server responded with ${resp.status}`);
+        }
+
+        published = true;
+        showToast('☁ Successfully Published to Cloud! All extensions will sync.');
+      }
+
+      // Always save locally to extension/browser storage
+      saveSettings(payloadConfig);
+
+      if (!published) {
+        // Fallback for static GitHub Pages when no GitHub Token is entered yet
+        showToast('Settings saved locally! To publish live to GitHub Pages, enter your GitHub token below.');
+      }
+
       if (storageStatusEl) {
-        storageStatusEl.innerHTML = '<span class="status-dot" style="background:#10b981;"></span> Published Live to Cloud';
+        storageStatusEl.innerHTML = '<span class="status-dot" style="background:#10b981;"></span> Synced Live';
       }
     } catch (err) {
-      alert(`Cloud Publish Notice:\n${err.message}\n\nNote: If the cloud endpoint is not yet live, your settings were saved locally. Once deployed on Vercel, this endpoint broadcasts to all users worldwide.`);
+      alert(`Publish Notice:\n${err.message}\n\nYour settings have been saved locally. To push directly to the live GitHub repository, please enter a GitHub Publisher Token in Tab 5.`);
     } finally {
       if (btnPublishCloud) {
         btnPublishCloud.disabled = false;
@@ -375,6 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (inputApiToken) inputApiToken.value = currentSettings.apiToken;
     if (inputCloudUrl) inputCloudUrl.value = currentSettings.remoteConfigUrl || DEFAULT_REMOTE_CONFIG_URL;
     if (inputAnnouncement) inputAnnouncement.value = currentSettings.announcement || '';
+    if (inputGhToken) inputGhToken.value = localStorage.getItem('zg_gh_token') || '';
 
     // Update Icon Style Cards
     iconStyleCards.forEach(card => {
@@ -384,6 +449,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderHotkeyTable();
     renderSimulator();
+    updateAuthBadge();
+  }
+
+  if (btnSaveGhToken) {
+    btnSaveGhToken.addEventListener('click', () => {
+      const val = (inputGhToken ? inputGhToken.value.trim() : '');
+      if (val) {
+        localStorage.setItem('zg_gh_token', val);
+        showToast('✓ GitHub Publisher Token saved securely in browser!');
+      } else {
+        localStorage.removeItem('zg_gh_token');
+        showToast('GitHub Publisher Token removed.');
+      }
+    });
+  }
     updateAuthBadge();
   }
   }

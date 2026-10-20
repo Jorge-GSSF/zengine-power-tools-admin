@@ -357,23 +357,29 @@
       
       <!-- Central Cloud Distribution Card -->
       <div class="card" style="border: 2px solid #bfdbfe; background: #f8fbff; margin-bottom: 24px;">
-        <h2 class="card-title" style="color:#1d4ed8;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="m12 12 0 9"></path><path d="m16 16-4-4-4 4"></path></svg>
-          Central Cloud Distribution (Affects ALL Users Worldwide)
-        </h2>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 8px;">
+          <h2 class="card-title" style="color:#1d4ed8; margin-bottom:0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="m12 12 0 9"></path><path d="m16 16-4-4-4 4"></path></svg>
+            Live Cloud Distribution (Affects ALL Users Worldwide)
+          </h2>
+          <a href="https://jorge-gssf.github.io/zengine-power-tools-admin/" target="_blank" class="btn btn-primary" style="font-size:12px; padding:6px 12px; text-decoration:none;">
+            Open Live Webpage ↗
+          </a>
+        </div>
+
         <p class="card-desc">
-          When this extension is published to the Microsoft Edge Add-ons or Chrome Web Store, every user's browser automatically synchronizes with this cloud configuration. Clicking <strong>"Publish to All Users"</strong> broadcasts icon designs, shortcuts, and workspace routing to every active staff member.
+          This administration dashboard is <strong>LIVE on the internet</strong>. Any staff member or administrator can access it directly at <a href="https://jorge-gssf.github.io/zengine-power-tools-admin/" target="_blank" style="color:#2563eb; font-weight:600;">https://jorge-gssf.github.io/zengine-power-tools-admin/</a>. When you click <strong>"Publish to All Users"</strong>, changes to icon aesthetics, keyboard shortcuts, announcements, and workspace routing propagate to every team member's browser extension worldwide.
         </p>
 
         <div style="display:flex; flex-direction:column; gap:16px; margin-top:16px;">
           <div>
-            <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">Cloud Config API Endpoint:</label>
+            <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">Live Cloud Config URL:</label>
             <div style="display:flex; gap:10px;">
-              <input type="text" id="inputCloudUrl" class="text-input" style="flex:1; font-family:monospace;" value="https://zengine-power-tools-admin.vercel.app/api/config">
+              <input type="text" id="inputCloudUrl" class="text-input" style="flex:1; font-family:monospace;" value="https://jorge-gssf.github.io/zengine-power-tools-admin/config.json">
               <button type="button" class="btn btn-secondary" id="btnTestCloudUrl">Test Cloud API</button>
             </div>
             <span style="font-size:11.5px; color:var(--text-muted); margin-top:4px; display:block;">
-              Use the default Vercel URL, or enter <code>http://localhost:3000/api/config</code> during local development.
+              Production endpoint hosted on GitHub Pages with global CORS headers. Extensions query this URL automatically.
             </span>
           </div>
 
@@ -381,7 +387,18 @@
             <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">Team Broadcast Announcement:</label>
             <input type="text" id="inputAnnouncement" class="text-input" placeholder="e.g. Welcome to Spring 2026 Disbursements! All student records updated.">
             <span style="font-size:11.5px; color:var(--text-muted); margin-top:4px; display:block;">
-              Optional alert displayed inside the Command Palette header for all team members.
+              Optional banner message displayed inside the Command Palette header for all team members.
+            </span>
+          </div>
+
+          <div>
+            <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">GitHub Cloud Publisher Token (Optional):</label>
+            <div style="display:flex; gap:10px;">
+              <input type="password" id="inputGhToken" class="text-input" style="flex:1; font-family:monospace;" placeholder="gho_... or ghp_... (Optional, allows 1-click publishing directly from the browser)">
+              <button type="button" class="btn btn-secondary" id="btnSaveGhToken">Save Token</button>
+            </div>
+            <span style="font-size:11.5px; color:var(--text-muted); margin-top:4px; display:block;">
+              Saved securely in your browser's local storage only. Allows the web page to commit updates to the live repository without a terminal.
             </span>
           </div>
 
@@ -390,24 +407,24 @@
       </div>
 
       <div class="card">
-        <h2 class="card-title">Deploy Admin Controls to Vercel</h2>
+        <h2 class="card-title">Live Hosting &amp; GitHub Repository</h2>
         <p class="card-desc">
-          This Admin Portal is 100% self-contained and ready to deploy as a public or team internal website on Vercel or any static web host.
+          Source code and configuration files are maintained in the George Snow Scholarship Fund GitHub repository.
         </p>
 
         <div style="background:#0f172a; color:#f8fafc; border-radius:8px; padding:18px; font-family:monospace; font-size:13px; margin-bottom:18px;">
-          <div style="color:#94a3b8; margin-bottom:8px;"># 1. Navigate to the admin project directory:</div>
-          <div style="color:#38bdf8; margin-bottom:14px;">cd C:\Users\JorgeContreras\.gemini\antigravity\scratch\zengine-power-tools-admin</div>
-          <div style="color:#94a3b8; margin-bottom:8px;"># 2. Deploy instantly using Vercel CLI:</div>
-          <div style="color:#4ade80;">npx vercel --prod</div>
+          <div style="color:#94a3b8; margin-bottom:8px;"># Live Webpage:</div>
+          <div style="color:#38bdf8; margin-bottom:14px;"><a href="https://jorge-gssf.github.io/zengine-power-tools-admin/" target="_blank" style="color:#38bdf8; text-decoration:none;">https://jorge-gssf.github.io/zengine-power-tools-admin/</a></div>
+          <div style="color:#94a3b8; margin-bottom:8px;"># GitHub Repository:</div>
+          <div style="color:#4ade80;"><a href="https://github.com/Jorge-GSSF/zengine-power-tools-admin" target="_blank" style="color:#4ade80; text-decoration:none;">https://github.com/Jorge-GSSF/zengine-power-tools-admin</a></div>
         </div>
 
-        <h3 style="font-size:14px; font-weight:700; margin-bottom:8px;">Features included in Vercel package:</h3>
+        <h3 style="font-size:14px; font-weight:700; margin-bottom:8px;">Key Features of Live Web Portal:</h3>
         <ul style="font-size:13px; color:var(--text-muted); line-height:1.6; margin-left:18px; margin-bottom:18px;">
-          <li>✓ <strong>Pre-configured <code>vercel.json</code></strong> with clean URL rewrites and serverless <code>/api/config</code> and <code>/api/login</code> endpoints.</li>
+          <li>✓ <strong>Public HTTPS URL</strong>: Hosted with 99.99% uptime, zero local dependencies, works on any computer or browser.</li>
           <li>✓ <strong>Universal CORS Headers</strong>: Enables Chrome and Edge extensions installed by staff worldwide to fetch published changes.</li>
-          <li>✓ <strong>Secure Passphrase Login</strong>: Default administrator passphrase <code>georgesnow2026</code> (override with <code>ADMIN_PASSWORD</code> env variable).</li>
-          <li>✓ <strong>One-Click JSON Sync</strong>: Use the "Export JSON" and "Import JSON" buttons at the top of the page to transfer your custom profiles and keybindings between the web portal and your browser extension.</li>
+          <li>✓ <strong>Secure Passphrase Login</strong>: Default administrator passphrase <code>georgesnow2026</code>.</li>
+          <li>✓ <strong>Vercel-Ready</strong>: Also includes <code>vercel.json</code> and serverless <code>/api/config</code> + <code>/api/login</code> functions if deploying to Vercel.</li>
         </ul>
       </div>
     </section>
