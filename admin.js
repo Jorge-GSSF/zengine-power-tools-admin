@@ -331,11 +331,22 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Always save locally to extension/browser storage
-      saveSettings(payloadConfig);
+      saveSettings(payloadConfig, false);
 
-      if (!published) {
-        // Fallback for static GitHub Pages when no GitHub Token is entered yet
-        showToast('Settings saved locally! To publish live to GitHub Pages, enter your GitHub token below.');
+      if (published) {
+        markPublishedLive();
+      } else {
+        const tokenInput = prompt(
+          'Cloud Publishing Setup:\n\nTo broadcast these changes live to all extensions worldwide, enter a GitHub Personal Access Token (with repo scope) once:\n\n(It will be saved securely in this browser for instant 1-click publishing in the future)'
+        );
+        if (tokenInput && tokenInput.trim()) {
+          localStorage.setItem('zg_gh_token', tokenInput.trim());
+          if (inputGhToken) inputGhToken.value = tokenInput.trim();
+          showToast('Token saved! Publishing to live cloud...');
+          return publishSettingsToCloud();
+        } else {
+          showToast('Draft saved in browser. Add a GitHub token in Tab 5 to publish live to all users.');
+        }
       }
 
       if (storageStatusEl) {
@@ -417,19 +428,42 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAuthBadge();
   }
 
-  function saveSettings(partial) {
+  let hasUnpublishedChanges = false;
+
+  function markUnpublishedChanges() {
+    hasUnpublishedChanges = true;
+    if (storageStatusEl && !hasExtensionStorage) {
+      storageStatusEl.innerHTML = '<span class="status-dot" style="background:#f59e0b; box-shadow:0 0 6px #f59e0b;"></span> Draft Edits (Click Publish to Broadcast)';
+      storageStatusEl.style.color = '#b45309';
+      storageStatusEl.style.background = '#fffbeb';
+      storageStatusEl.style.borderColor = '#fde68a';
+    }
+  }
+
+  function markPublishedLive() {
+    hasUnpublishedChanges = false;
+    if (storageStatusEl) {
+      storageStatusEl.innerHTML = '<span class="status-dot" style="background:#10b981; box-shadow:0 0 6px #10b981;"></span> Published Live to Cloud';
+      storageStatusEl.style.color = '#047857';
+      storageStatusEl.style.background = '#ecfdf5';
+      storageStatusEl.style.borderColor = '#a7f3d0';
+    }
+  }
+
+  function saveSettings(partial, notify = false) {
     currentSettings = { ...currentSettings, ...partial };
     if (hasExtensionStorage) {
       chrome.storage.sync.set(partial, () => {
-        showToast('Settings saved to extension storage!');
+        if (notify) showToast('Settings saved to extension storage!');
       });
     } else {
       try {
         localStorage.setItem('zg_powertools_admin_settings', JSON.stringify(currentSettings));
-        showToast('Saved to local browser storage!');
+        if (notify) showToast('Draft saved!');
       } catch (e) {}
     }
     renderSimulator();
+    markUnpublishedChanges();
   }
 
   function updateUiFromSettings() {
