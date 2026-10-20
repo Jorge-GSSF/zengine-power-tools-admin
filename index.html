@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zengine Power-Tools • Central Admin Portal</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <div class="admin-app">
+    
+    <!-- Top Header -->
+    <header class="admin-header">
+      <div class="brand-section">
+        <img src="icons/icon48.png" alt="Zengine Power-Tools Logo" class="brand-logo">
+        <div class="brand-text">
+          <h1>
+            Zengine Power-Tools Admin
+            <span class="version-pill">v1.4.5</span>
+          </h1>
+          <p>George Snow Scholarship Fund • Central Management &amp; Configuration</p>
+        </div>
+      </div>
+
+      <div class="header-status-area">
+        <div class="admin-lock-badge locked" id="adminLockBadge" title="Click to log in as administrator">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span id="adminLockText">Admin Login</span>
+        </div>
+
+        <button type="button" class="btn btn-publish" id="btnPublishCloud" title="Publish configuration to all extensions worldwide">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="m12 12 0 9"></path><path d="m16 16-4-4-4 4"></path></svg>
+          Publish to All Users
+        </button>
+
+        <div class="status-indicator" id="storageStatus">
+          <span class="status-dot"></span> Checking connection...
+        </div>
+
+        <button type="button" class="btn btn-secondary" id="btnExportJson" title="Export settings as JSON">
+          Export JSON
+        </button>
+        <button type="button" class="btn btn-secondary" id="btnImportJson" title="Import settings from JSON">
+          Import JSON
+        </button>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="admin-nav">
+      <button type="button" class="admin-nav-tab active" data-tab="aesthetics">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="m4.93 4.93 4.24 4.24"></path>
+          <path d="m14.83 9.17 4.24-4.24"></path>
+          <path d="m14.83 14.83 4.24 4.24"></path>
+          <path d="m9.17 14.83-4.24 4.24"></path>
+          <circle cx="12" cy="12" r="4"></circle>
+        </svg>
+        <span>Search Aesthetics &amp; Icons</span>
+      </button>
+
+      <button type="button" class="admin-nav-tab" data-tab="hotkeys">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+          <line x1="6" y1="8" x2="6" y2="8"></line>
+          <line x1="10" y1="8" x2="10" y2="8"></line>
+          <line x1="14" y1="8" x2="14" y2="8"></line>
+          <line x1="18" y1="8" x2="18" y2="8"></line>
+          <line x1="6" y1="12" x2="6" y2="12"></line>
+          <line x1="18" y1="12" x2="18" y2="12"></line>
+          <line x1="8" y1="16" x2="16" y2="16"></line>
+        </svg>
+        <span>Keyboard Shortcuts</span>
+      </button>
+
+      <button type="button" class="admin-nav-tab" data-tab="workspaces">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>Workspaces &amp; Drawer Routes</span>
+      </button>
+
+      <button type="button" class="admin-nav-tab" data-tab="api">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <span>API &amp; Live Search</span>
+      </button>
+
+      <button type="button" class="admin-nav-tab" data-tab="vercel">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 2 22 22 22"></polygon>
+        </svg>
+        <span>Vercel &amp; Web Hosting</span>
+      </button>
+    </nav>
+
+    <!-- TAB 1: Search Aesthetics & Icons -->
+    <section class="tab-content active" id="tab-aesthetics">
+      
+      <!-- Primary Setting: Icon System Design -->
+      <div class="card">
+        <h2 class="card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
+          Quick Search Icon Design System
+        </h2>
+        <p class="card-desc">
+          Choose the visual icon presentation for results in the Spotlight Command Palette (<kbd>Ctrl + K</kbd>). All changes apply instantly across your browser extension and Zengine tabs.
+        </p>
+
+        <div class="icon-styles-grid">
+          
+          <!-- Option A: Modern Minimalist (Vector Outlines) -->
+          <div class="icon-style-card selected" data-style="modern">
+            <div class="icon-card-header">
+              <h3>Modern Minimalist</h3>
+              <span class="badge-recommended">Recommended</span>
+            </div>
+            <div class="icon-preview-row">
+              <span class="icon-sample" title="Scholar">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+              </span>
+              <span class="icon-sample" title="Disbursement">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
+              </span>
+              <span class="icon-sample" title="Award">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path></svg>
+              </span>
+              <span class="icon-sample" title="Payee">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="18" x="4" y="3" rx="2"></rect><line x1="8" y1="7" x2="8" y2="7"></line><line x1="16" y1="7" x2="16" y2="7"></line></svg>
+              </span>
+            </div>
+            <p class="icon-style-desc">
+              Clean, professional monochrome vector SVG outline icons. Replaces emojis with sleek, refined typography-friendly badges.
+            </p>
+          </div>
+
+          <!-- Option B: Text-Only (Hide Icons) -->
+          <div class="icon-style-card" data-style="none">
+            <div class="icon-card-header">
+              <h3>Text-Only (No Icons)</h3>
+            </div>
+            <div class="icon-preview-row">
+              <span style="font-size: 11px; font-weight: 700; color: #475569; letter-spacing: 0.3px;">STUDENTS</span>
+              <span style="font-size: 11px; font-weight: 700; color: #475569; letter-spacing: 0.3px;">AWARDS</span>
+              <span style="font-size: 11px; font-weight: 700; color: #475569; letter-spacing: 0.3px;">PAYEES</span>
+            </div>
+            <p class="icon-style-desc">
+              Completely hides all icons and emojis. Delivers an ultra-minimal, high-density typographic layout.
+            </p>
+          </div>
+
+          <!-- Option C: Classic Emojis -->
+          <div class="icon-style-card" data-style="emoji">
+            <div class="icon-card-header">
+              <h3>Classic Emojis</h3>
+            </div>
+            <div class="icon-preview-row">
+              <span style="font-size: 18px;">🎓</span>
+              <span style="font-size: 18px;">💰</span>
+              <span style="font-size: 18px;">🏆</span>
+              <span style="font-size: 18px;">🏛️</span>
+              <span style="font-size: 18px;">🚨</span>
+            </div>
+            <p class="icon-style-desc">
+              Legacy standard emoji symbols (graduation caps, money bags, trophies, sirens).
+            </p>
+          </div>
+
+        </div>
+
+        <!-- General Palette Behavior Options -->
+        <div class="form-row">
+          <div class="form-row-label">
+            <span class="form-label-title">Quick Search Window Size</span>
+            <span class="form-label-desc">Toggle between standard 640px popup or expanded widescreen 920px view</span>
+          </div>
+          <select id="selectPaletteSize" class="select-input">
+            <option value="regular">Regular Size (640px)</option>
+            <option value="large">Expanded &amp; Longer (920px)</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-row-label">
+            <span class="form-label-title">Auto-Open Disbursements Tab</span>
+            <span class="form-label-desc">Automatically switch to Disbursements History when opening any scholar record</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="toggleAutoOpen" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+      </div>
+
+      <!-- Live Interactive Simulator Card -->
+      <div class="card">
+        <h2 class="card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg>
+          Live Interactive Palette Simulator
+        </h2>
+        <p class="card-desc">
+          Test and preview the look and feel of your search results, title descender spacing, and icon design in real time:
+        </p>
+
+        <div class="simulator-container">
+          <div class="simulator-header">
+            <span class="simulator-title">Spotlight Command Palette Live Preview</span>
+            <span class="simulator-badge">Zengine View Simulator</span>
+          </div>
+
+          <div class="mockup-palette">
+            <div class="mockup-palette-header">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" class="mockup-palette-input" id="mockupSearchInput" placeholder="Search students, payees, disbursements, forms...">
+              <div class="mockup-badges">
+                <span class="mockup-badge" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd; font-weight:700;">🏢 Disbursements</span>
+                <button type="button" class="mockup-btn" title="Toggle size">🗖</button>
+                <button type="button" class="mockup-btn close" id="mockupCloseBtn" title="Close search (Esc)">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+              </div>
+            </div>
+
+            <ul class="mockup-list" id="mockupSearchList">
+              <!-- Dynamically populated by admin.js -->
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 2: Keyboard Shortcuts -->
+    <section class="tab-content" id="tab-hotkeys">
+      <div class="card">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 14px;">
+          <div>
+            <h2 class="card-title">Keyboard Shortcuts &amp; Remapping</h2>
+            <p class="card-desc" style="margin-bottom:0;">
+              Click on any hotkey badge to listen and record a custom keybinding, or use the switches to toggle individual actions on/off.
+            </p>
+          </div>
+          <button type="button" class="btn btn-secondary" id="btnResetAllHotkeys">
+            Reset to Defaults
+          </button>
+        </div>
+
+        <table class="hotkey-table">
+          <thead>
+            <tr>
+              <th style="width: 55%;">Action &amp; Description</th>
+              <th style="width: 25%;">Assigned Key</th>
+              <th style="width: 20%;">Enabled</th>
+            </tr>
+          </thead>
+          <tbody id="hotkeyTableBody">
+            <!-- Dynamically populated by admin.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 3: Workspaces & Drawer Routes -->
+    <section class="tab-content" id="tab-workspaces">
+      <div class="card">
+        <h2 class="card-title">Configured Workspaces &amp; Direct Routes</h2>
+        <p class="card-desc">
+          Zengine Power-Tools detects your active workspace automatically. Fast Disbursement routing and Form IDs are mapped below:
+        </p>
+
+        <div class="section-grid">
+          
+          <!-- Workspace 34919 -->
+          <div style="border: 1px solid var(--border); border-radius: 8px; padding: 18px; background: #ffffff;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 12px;">
+              <h3 style="font-size:15px; color:var(--text-main); font-weight:700;">Disbursements (34919)</h3>
+              <span class="badge-recommended" style="background:#dcfce7; color:#15803d;">Active Production</span>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
+              George Snow Scholarship Fund production disbursement workspace.
+            </p>
+
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:12px; margin-bottom:14px; font-size:12px;">
+              <strong style="color:#0f172a;">Fast Disbursement (+ Disb) Target:</strong><br>
+              <code style="display:block; margin-top:4px; color:#2563eb; font-size:11px; word-break:break-all;">
+                https://platform.zenginehq.com/workspaces/34919/data/185672?record=185672.add&amp;tab=linked
+              </code>
+              <span style="font-size:11px; color:#64748b; margin-top:4px; display:block;">
+                ✓ Opens the linked record drawer view for Disbursement Allocation directly.
+              </span>
+            </div>
+
+            <ul style="list-style:none; font-size:12px; color:#475569; display:flex; flex-direction:column; gap:6px;">
+              <li>• <strong>Student Profiles:</strong> Form 185591</li>
+              <li>• <strong>Disbursement Allocation:</strong> Form 185672</li>
+              <li>• <strong>Scholarship Awards:</strong> Form 185593</li>
+              <li>• <strong>Emergency Fund Disbursements:</strong> Form 370408</li>
+              <li>• <strong>George Snow Payees:</strong> Form 185766</li>
+              <li>• <strong>Checks Ledger:</strong> Form 185673</li>
+            </ul>
+          </div>
+
+          <!-- Workspace 40800 -->
+          <div style="border: 1px solid var(--border); border-radius: 8px; padding: 18px; background: #ffffff;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 12px;">
+              <h3 style="font-size:15px; color:var(--text-main); font-weight:700;">Testing (40800)</h3>
+              <span class="version-pill">Staging</span>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
+              Staging &amp; operations workspace with custom disbursement modal plugin support.
+            </p>
+
+            <ul style="list-style:none; font-size:12px; color:#475569; display:flex; flex-direction:column; gap:6px;">
+              <li>• <strong>Student Profiles:</strong> Form 429530</li>
+              <li>• <strong>Disbursement Allocation:</strong> Form 429477</li>
+              <li>• <strong>Scholarship Awards:</strong> Form 429478</li>
+              <li>• <strong>Emergency Fund Disbursements:</strong> Form 429529</li>
+              <li>• <strong>Payees &amp; Vendors:</strong> Form 429480</li>
+              <li>• <strong>Checks Ledger:</strong> Form 429479</li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 4: API & Live Search -->
+    <section class="tab-content" id="tab-api">
+      <div class="card">
+        <h2 class="card-title">Zengine API Access &amp; Diagnostics</h2>
+        <p class="card-desc">
+          Live student, award, payee, and disbursement search in the Command Palette (<kbd>Ctrl + K</kbd>) communicates directly with Zengine's REST API.
+        </p>
+
+        <div style="margin-bottom: 20px;">
+          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">API Access Token:</label>
+          <div style="display:flex; gap:10px;">
+            <input type="password" id="inputApiToken" class="text-input" style="flex:1; font-family:monospace;" placeholder="Enter token...">
+            <button type="button" class="btn btn-primary" id="btnSaveToken">Save Token</button>
+            <button type="button" class="btn btn-secondary" id="btnTestToken">Test Connection</button>
+          </div>
+        </div>
+
+        <div id="tokenTestResult" style="display:none; margin-top:14px;"></div>
+      </div>
+    </section>
+
+    <!-- TAB 5: Vercel & Web Hosting -->
+    <section class="tab-content" id="tab-vercel">
+      
+      <!-- Central Cloud Distribution Card -->
+      <div class="card" style="border: 2px solid #bfdbfe; background: #f8fbff; margin-bottom: 24px;">
+        <h2 class="card-title" style="color:#1d4ed8;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="m12 12 0 9"></path><path d="m16 16-4-4-4 4"></path></svg>
+          Central Cloud Distribution (Affects ALL Users Worldwide)
+        </h2>
+        <p class="card-desc">
+          When this extension is published to the Microsoft Edge Add-ons or Chrome Web Store, every user's browser automatically synchronizes with this cloud configuration. Clicking <strong>"Publish to All Users"</strong> broadcasts icon designs, shortcuts, and workspace routing to every active staff member.
+        </p>
+
+        <div style="display:flex; flex-direction:column; gap:16px; margin-top:16px;">
+          <div>
+            <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">Cloud Config API Endpoint:</label>
+            <div style="display:flex; gap:10px;">
+              <input type="text" id="inputCloudUrl" class="text-input" style="flex:1; font-family:monospace;" value="https://zengine-power-tools-admin.vercel.app/api/config">
+              <button type="button" class="btn btn-secondary" id="btnTestCloudUrl">Test Cloud API</button>
+            </div>
+            <span style="font-size:11.5px; color:var(--text-muted); margin-top:4px; display:block;">
+              Use the default Vercel URL, or enter <code>http://localhost:3000/api/config</code> during local development.
+            </span>
+          </div>
+
+          <div>
+            <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">Team Broadcast Announcement:</label>
+            <input type="text" id="inputAnnouncement" class="text-input" placeholder="e.g. Welcome to Spring 2026 Disbursements! All student records updated.">
+            <span style="font-size:11.5px; color:var(--text-muted); margin-top:4px; display:block;">
+              Optional alert displayed inside the Command Palette header for all team members.
+            </span>
+          </div>
+
+          <div id="cloudTestResult" style="display:none; font-size:12.5px; padding:12px; border-radius:6px;"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Deploy Admin Controls to Vercel</h2>
+        <p class="card-desc">
+          This Admin Portal is 100% self-contained and ready to deploy as a public or team internal website on Vercel or any static web host.
+        </p>
+
+        <div style="background:#0f172a; color:#f8fafc; border-radius:8px; padding:18px; font-family:monospace; font-size:13px; margin-bottom:18px;">
+          <div style="color:#94a3b8; margin-bottom:8px;"># 1. Navigate to the admin project directory:</div>
+          <div style="color:#38bdf8; margin-bottom:14px;">cd C:\Users\JorgeContreras\.gemini\antigravity\scratch\zengine-power-tools-admin</div>
+          <div style="color:#94a3b8; margin-bottom:8px;"># 2. Deploy instantly using Vercel CLI:</div>
+          <div style="color:#4ade80;">npx vercel --prod</div>
+        </div>
+
+        <h3 style="font-size:14px; font-weight:700; margin-bottom:8px;">Features included in Vercel package:</h3>
+        <ul style="font-size:13px; color:var(--text-muted); line-height:1.6; margin-left:18px; margin-bottom:18px;">
+          <li>✓ <strong>Pre-configured <code>vercel.json</code></strong> with clean URL rewrites and serverless <code>/api/config</code> and <code>/api/login</code> endpoints.</li>
+          <li>✓ <strong>Universal CORS Headers</strong>: Enables Chrome and Edge extensions installed by staff worldwide to fetch published changes.</li>
+          <li>✓ <strong>Secure Passphrase Login</strong>: Default administrator passphrase <code>georgesnow2026</code> (override with <code>ADMIN_PASSWORD</code> env variable).</li>
+          <li>✓ <strong>One-Click JSON Sync</strong>: Use the "Export JSON" and "Import JSON" buttons at the top of the page to transfer your custom profiles and keybindings between the web portal and your browser extension.</li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Admin Login Modal -->
+  <div class="admin-modal-overlay" id="adminLoginModal">
+    <div class="admin-modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;">
+        <div class="admin-modal-header" style="margin-bottom:0;">
+          <img src="icons/icon48.png" style="width:36px; height:36px; border-radius:6px; border:1px solid #e2e8f0;" alt="Logo">
+          <div>
+            <h3>Administrator Login</h3>
+            <p>George Snow Scholarship Fund</p>
+          </div>
+        </div>
+        <button type="button" class="admin-modal-close" id="btnAdminModalClose">&times;</button>
+      </div>
+
+      <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:18px; line-height:1.5;">
+        Enter the administrative passphrase to unlock permissions and publish settings to all extension users.
+      </p>
+
+      <form id="adminLoginForm">
+        <div style="margin-bottom:16px;">
+          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">Administrator Passphrase:</label>
+          <input type="password" id="inputAdminPassword" class="text-input" placeholder="Enter passphrase..." required autofocus>
+        </div>
+
+        <div id="adminModalError" style="display:none; color:#ef4444; font-size:12px; margin-bottom:14px; background:#fef2f2; border:1px solid #fecaca; padding:8px 12px; border-radius:6px;"></div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+          <button type="button" class="btn btn-secondary" id="btnAdminModalCancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btnAdminModalSubmit">Unlock Admin Controls</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="adminToastContainer" class="admin-toast-container"></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "zengine-power-tools-admin",
+  "version": "1.4.4",
+  "description": "Zengine Power-Tools & Auto-Tab Central Admin Portal & Controls Dashboard",
+  "scripts": {
+    "start": "python server.py",
+    "dev": "python server.py"
+  },
+  "keywords": [
+    "zengine",
+    "power-tools",
+    "admin-controls",
+    "scholarships"
+  ],
+  "author": "George Snow Scholarship Fund",
+  "license": "MIT"
+}

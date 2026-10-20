@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "name": "zengine-power-tools-admin",
+  "builds": [
+    {
+      "src": "*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
