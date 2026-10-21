@@ -1,27 +1,132 @@
 {
-  "iconStyle": "modern",
+  "iconStyle": "emoji",
   "paletteSize": "regular",
   "autoOpenEnabled": true,
   "apiToken": "644cc1ee38244d57d7b458eaf29d2b714fb7e267",
   "defaultWorkspaceId": "34919",
   "shortcuts": {
-    "commandPalette": { "id": "commandPalette", "label": "Command Palette", "desc": "Live search students, awards & disbursements", "enabled": true, "key": "ctrl+k", "display": "Ctrl + K" },
-    "navDown":        { "id": "navDown", "label": "Next Record", "desc": "Move to next record (table or drawer)", "enabled": true, "key": "j", "display": "J" },
-    "navUp":          { "id": "navUp", "label": "Previous Record", "desc": "Move to previous record (table or drawer)", "enabled": true, "key": "k", "display": "K" },
-    "openRecord":     { "id": "openRecord", "label": "Open Selected Record", "desc": "Open side panel for highlighted row", "enabled": true, "key": "enter", "display": "Enter" },
-    "closePanel":     { "id": "closePanel", "label": "Close Panel / Escape", "desc": "Dismiss side panel or modal", "enabled": true, "key": "escape", "display": "Esc" },
-    "cycleTabNext":   { "id": "cycleTabNext", "label": "Next Side Tab", "desc": "Cycle forward through side panel tabs", "enabled": true, "key": "]", "display": "]" },
-    "cycleTabPrev":   { "id": "cycleTabPrev", "label": "Previous Side Tab", "desc": "Cycle backward through side panel tabs", "enabled": true, "key": "[", "display": "[" },
-    "copyLink":       { "id": "copyLink", "label": "Copy Clean Record Link", "desc": "Direct URL to current record", "enabled": true, "key": "alt+l", "display": "Alt + L" },
-    "copySummary":    { "id": "copySummary", "label": "Copy Scholar Summary", "desc": "Scholar Name, ID & balance card", "enabled": true, "key": "alt+c", "display": "Alt + C" },
-    "copyId":         { "id": "copyId", "label": "Copy Record ID Only", "desc": "Copy clean numeric ID to clipboard", "enabled": true, "key": "alt+i", "display": "Alt + I" },
-    "focusSearch":    { "id": "focusSearch", "label": "Focus Table Search", "desc": "Open and focus table search bar", "enabled": true, "key": "/", "display": "/" },
-    "addNewRecord":   { "id": "addNewRecord", "label": "Add New Record", "desc": "Trigger \"+ Add Record\" button", "enabled": true, "key": "alt+n", "display": "Alt + N" },
-    "refreshData":    { "id": "refreshData", "label": "Refresh Table Data", "desc": "Reload current table data without page refresh", "enabled": true, "key": "alt+r", "display": "Alt + R" },
-    "toggleFilters":  { "id": "toggleFilters", "label": "Toggle Table Filters", "desc": "Open/close Form Tools filter sidebar", "enabled": true, "key": "alt+f", "display": "Alt + F" },
-    "quickSave":      { "id": "quickSave", "label": "Quick Save Record", "desc": "Trigger save on current form", "enabled": true, "key": "ctrl+s", "display": "Ctrl + S" }
+    "commandPalette": {
+      "id": "commandPalette",
+      "label": "Command Palette",
+      "desc": "Live search students, awards & disbursements",
+      "enabled": true,
+      "key": "ctrl+k",
+      "display": "Ctrl + K"
+    },
+    "navDown": {
+      "id": "navDown",
+      "label": "Next Record",
+      "desc": "Move to next record (table or drawer)",
+      "enabled": true,
+      "key": "j",
+      "display": "J"
+    },
+    "navUp": {
+      "id": "navUp",
+      "label": "Previous Record",
+      "desc": "Move to previous record (table or drawer)",
+      "enabled": true,
+      "key": "k",
+      "display": "K"
+    },
+    "openRecord": {
+      "id": "openRecord",
+      "label": "Open Selected Record",
+      "desc": "Open side panel for highlighted row",
+      "enabled": true,
+      "key": "enter",
+      "display": "Enter"
+    },
+    "closePanel": {
+      "id": "closePanel",
+      "label": "Close Panel / Escape",
+      "desc": "Dismiss side panel or modal",
+      "enabled": true,
+      "key": "escape",
+      "display": "Esc"
+    },
+    "cycleTabNext": {
+      "id": "cycleTabNext",
+      "label": "Next Side Tab",
+      "desc": "Cycle forward through side panel tabs",
+      "enabled": true,
+      "key": "]",
+      "display": "]"
+    },
+    "cycleTabPrev": {
+      "id": "cycleTabPrev",
+      "label": "Previous Side Tab",
+      "desc": "Cycle backward through side panel tabs",
+      "enabled": true,
+      "key": "[",
+      "display": "["
+    },
+    "copyLink": {
+      "id": "copyLink",
+      "label": "Copy Clean Record Link",
+      "desc": "Direct URL to current record",
+      "enabled": true,
+      "key": "alt+l",
+      "display": "Alt + L"
+    },
+    "copySummary": {
+      "id": "copySummary",
+      "label": "Copy Scholar Summary",
+      "desc": "Scholar Name, ID & balance card",
+      "enabled": true,
+      "key": "alt+c",
+      "display": "Alt + C"
+    },
+    "copyId": {
+      "id": "copyId",
+      "label": "Copy Record ID Only",
+      "desc": "Copy clean numeric ID to clipboard",
+      "enabled": true,
+      "key": "alt+i",
+      "display": "Alt + I"
+    },
+    "focusSearch": {
+      "id": "focusSearch",
+      "label": "Focus Table Search",
+      "desc": "Open and focus table search bar",
+      "enabled": true,
+      "key": "/",
+      "display": "/"
+    },
+    "addNewRecord": {
+      "id": "addNewRecord",
+      "label": "Add New Record",
+      "desc": "Trigger \"+ Add Record\" button",
+      "enabled": true,
+      "key": "alt+n",
+      "display": "Alt + N"
+    },
+    "refreshData": {
+      "id": "refreshData",
+      "label": "Refresh Table Data",
+      "desc": "Reload current table data without page refresh",
+      "enabled": true,
+      "key": "alt+r",
+      "display": "Alt + R"
+    },
+    "toggleFilters": {
+      "id": "toggleFilters",
+      "label": "Toggle Table Filters",
+      "desc": "Open/close Form Tools filter sidebar",
+      "enabled": true,
+      "key": "alt+f",
+      "display": "Alt + F"
+    },
+    "quickSave": {
+      "id": "quickSave",
+      "label": "Quick Save Record",
+      "desc": "Trigger save on current form",
+      "enabled": true,
+      "key": "ctrl+s",
+      "display": "Ctrl + S"
+    }
   },
   "announcement": "",
   "version": "1.4.5",
-  "updatedAt": "2026-10-20T23:30:00Z"
+  "updatedAt": "2026-10-21T00:06:05.482Z"
 }
