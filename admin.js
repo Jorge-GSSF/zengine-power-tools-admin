@@ -1,9 +1,11 @@
 /**
  * Zengine Power-Tools Central Admin Portal
- * Controls, Icon Styles, Hotkeys & Live Palette Simulator
+ * Controls, Icon Styles, Hotkeys, Cloud Sync & PIN Protection
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  const ADMIN_PIN = '010902';
+
   // 1. DEFAULT VALUES
   const DEFAULT_SHORTCUTS = {
     commandPalette: { id: 'commandPalette', label: 'Command Palette', desc: 'Live search students, awards & disbursements', enabled: true, key: 'ctrl+k', display: 'Ctrl + K' },
@@ -37,57 +39,37 @@ document.addEventListener('DOMContentLoaded', () => {
     remoteConfigUrl: DEFAULT_REMOTE_CONFIG_URL
   };
 
-  // Modern Minimalist Outline SVG Dictionary
-  const MODERN_ICONS = {
-    students: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>`,
-    disbursements: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>`,
-    awards: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path></svg>`,
-    emergency: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-2 10h5L11 22l2-10H8z"></path></svg>`,
-    payees: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="18" x="4" y="3" rx="2"></rect><line x1="8" y1="7" x2="8" y2="7"></line><line x1="16" y1="7" x2="16" y2="7"></line><line x1="8" y1="11" x2="8" y2="11"></line><line x1="16" y1="11" x2="16" y2="11"></line><line x1="8" y1="15" x2="8" y2="15"></line><line x1="16" y1="15" x2="16" y2="15"></line></svg>`,
-    link: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`,
-    refresh: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path><polyline points="21 3 21 8 16 8"></polyline></svg>`,
-    form: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" x2="8" y1="13" y2="13"></line><line x1="16" x2="8" y1="17" y2="17"></line></svg>`
-  };
-
-  const EMOJI_MAP = {
-    students: '🎓',
-    disbursements: '💰',
-    awards: '🏆',
-    emergency: '🚨',
-    payees: '🏛️',
-    link: '🔗',
-    form: '📄'
-  };
-
-  const hasExtensionStorage = typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync;
-
   // 2. DOM REFERENCES
+  const pinGateOverlay = document.getElementById('adminPinGate');
+  const pinCard = document.querySelector('.pin-gate-card');
+  const pinHiddenInput = document.getElementById('pinHiddenInput');
+  const pinDots = document.querySelectorAll('.pin-dot');
+  const pinErrorMsg = document.getElementById('pinErrorMsg');
+  const pinKeypad = document.querySelector('.pin-keypad');
+  const btnPinClear = document.getElementById('btnPinClear');
+  const btnPinBackspace = document.getElementById('btnPinBackspace');
+
+  const adminMainApp = document.getElementById('adminMainApp');
+  const btnLockAdmin = document.getElementById('btnLockAdmin');
+  const storageStatusText = document.getElementById('storageStatusText');
+  const btnPublishCloud = document.getElementById('btnPublishCloud');
+  const btnExportJson = document.getElementById('btnExportJson');
+  const btnImportJson = document.getElementById('btnImportJson');
+
   const navTabs = document.querySelectorAll('.admin-nav-tab');
   const tabContents = document.querySelectorAll('.tab-content');
-  const storageStatusEl = document.getElementById('storageStatus');
-  const toggleAutoOpen = document.getElementById('toggleAutoOpen');
+  const iconStyleCards = document.querySelectorAll('.icon-style-card');
   const selectPaletteSize = document.getElementById('selectPaletteSize');
-  const selectPrimaryWs = document.getElementById('selectPrimaryWs');
+  const toggleAutoOpen = document.getElementById('toggleAutoOpen');
+
+  const hotkeyTableBody = document.getElementById('hotkeyTableBody');
+  const btnResetAllHotkeys = document.getElementById('btnResetAllHotkeys');
+
   const inputApiToken = document.getElementById('inputApiToken');
   const btnSaveToken = document.getElementById('btnSaveToken');
   const btnTestToken = document.getElementById('btnTestToken');
   const tokenTestResult = document.getElementById('tokenTestResult');
-  const iconStyleCards = document.querySelectorAll('.icon-style-card');
-  const hotkeyTableBody = document.getElementById('hotkeyTableBody');
-  const btnResetAllHotkeys = document.getElementById('btnResetAllHotkeys');
-  const btnExportJson = document.getElementById('btnExportJson');
-  const btnImportJson = document.getElementById('btnImportJson');
 
-  // Cloud & Login Controls
-  const btnPublishCloud = document.getElementById('btnPublishCloud');
-  const adminLockBadge = document.getElementById('adminLockBadge');
-  const adminLockText = document.getElementById('adminLockText');
-  const adminLoginModal = document.getElementById('adminLoginModal');
-  const btnAdminModalClose = document.getElementById('btnAdminModalClose');
-  const btnAdminModalCancel = document.getElementById('btnAdminModalCancel');
-  const adminLoginForm = document.getElementById('adminLoginForm');
-  const inputAdminPassword = document.getElementById('inputAdminPassword');
-  const adminModalError = document.getElementById('adminModalError');
   const inputCloudUrl = document.getElementById('inputCloudUrl');
   const btnTestCloudUrl = document.getElementById('btnTestCloudUrl');
   const cloudTestResult = document.getElementById('cloudTestResult');
@@ -95,412 +77,153 @@ document.addEventListener('DOMContentLoaded', () => {
   const inputGhToken = document.getElementById('inputGhToken');
   const btnSaveGhToken = document.getElementById('btnSaveGhToken');
 
-  // Simulator DOM
-  const simulatorInput = document.getElementById('mockupSearchInput');
-  const simulatorList = document.getElementById('mockupSearchList');
-  const simulatorCloseBtn = document.getElementById('mockupCloseBtn');
+  // =========================================================================
+  // 3. PIN GATE SECURITY ENGINE ("010902")
+  // =========================================================================
+  let enteredPin = '';
 
-  // Pending publish action when authenticating
-  let pendingPublishAfterAuth = false;
-
-  // 3. ADMIN AUTHENTICATION
-  function isAdminAuthenticated() {
-    return !!sessionStorage.getItem('zg_admin_session_token');
+  function isPinUnlocked() {
+    return sessionStorage.getItem('zg_admin_pin_auth') === ADMIN_PIN;
   }
 
-  function updateAuthBadge() {
-    if (!adminLockBadge || !adminLockText) return;
-    if (isAdminAuthenticated()) {
-      adminLockBadge.className = 'admin-lock-badge unlocked';
-      adminLockBadge.innerHTML = `
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
-        <span id="adminLockText">Admin: Unlocked</span>
-      `;
-      adminLockBadge.title = 'Administrator Authenticated. Click to log out.';
+  function updatePinDots() {
+    pinDots.forEach((dot, idx) => {
+      dot.classList.toggle('filled', idx < enteredPin.length);
+      dot.classList.remove('success');
+    });
+  }
+
+  function verifyPin() {
+    if (enteredPin.length < 6) return;
+
+    if (enteredPin === ADMIN_PIN) {
+      pinDots.forEach(dot => dot.classList.add('success'));
+      if (pinErrorMsg) {
+        pinErrorMsg.style.color = 'var(--success)';
+        pinErrorMsg.textContent = '✓ Access Granted';
+      }
+
+      sessionStorage.setItem('zg_admin_pin_auth', ADMIN_PIN);
+      sessionStorage.setItem('zg_admin_session_token', 'pin_unlocked');
+
+      setTimeout(() => {
+        pinGateOverlay.classList.add('hidden');
+        adminMainApp.classList.add('unlocked');
+        showToast('✓ Welcome, Administrator');
+      }, 200);
+
     } else {
-      adminLockBadge.className = 'admin-lock-badge locked';
-      adminLockBadge.innerHTML = `
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-        <span id="adminLockText">Admin Login</span>
-      `;
-      adminLockBadge.title = 'Click to log in as administrator';
-    }
-  }
-
-  function openLoginModal() {
-    if (adminLoginModal) {
-      if (adminModalError) adminModalError.style.display = 'none';
-      if (inputAdminPassword) inputAdminPassword.value = '';
-      adminLoginModal.classList.add('active');
-      setTimeout(() => inputAdminPassword && inputAdminPassword.focus(), 100);
-    }
-  }
-
-  function closeLoginModal() {
-    if (adminLoginModal) {
-      adminLoginModal.classList.remove('active');
-      pendingPublishAfterAuth = false;
-    }
-  }
-
-  if (adminLockBadge) {
-    adminLockBadge.addEventListener('click', () => {
-      if (isAdminAuthenticated()) {
-        if (confirm('Log out from administrator mode?')) {
-          sessionStorage.removeItem('zg_admin_session_token');
-          sessionStorage.removeItem('zg_admin_pass');
-          updateAuthBadge();
-          showToast('Logged out from admin mode.');
+      if (pinCard) pinCard.classList.add('shake');
+      if (pinErrorMsg) {
+        pinErrorMsg.style.color = 'var(--danger)';
+        pinErrorMsg.textContent = 'Incorrect PIN. Access Denied.';
+      }
+      setTimeout(() => {
+        if (pinCard) pinCard.classList.remove('shake');
+        enteredPin = '';
+        updatePinDots();
+        if (pinHiddenInput) {
+          pinHiddenInput.value = '';
+          pinHiddenInput.focus();
         }
-      } else {
-        openLoginModal();
+      }, 450);
+    }
+  }
+
+  function handleDigitInput(digit) {
+    if (enteredPin.length >= 6) return;
+    if (pinErrorMsg) pinErrorMsg.textContent = '';
+    enteredPin += digit;
+    updatePinDots();
+    if (enteredPin.length === 6) {
+      verifyPin();
+    }
+  }
+
+  function handleBackspace() {
+    if (enteredPin.length > 0) {
+      enteredPin = enteredPin.slice(0, -1);
+      if (pinErrorMsg) pinErrorMsg.textContent = '';
+      updatePinDots();
+    }
+  }
+
+  function handleClear() {
+    enteredPin = '';
+    if (pinErrorMsg) pinErrorMsg.textContent = '';
+    updatePinDots();
+    if (pinHiddenInput) {
+      pinHiddenInput.value = '';
+      pinHiddenInput.focus();
+    }
+  }
+
+  // Keypad clicks
+  if (pinKeypad) {
+    pinKeypad.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      const digit = btn.getAttribute('data-digit');
+      if (digit !== null) {
+        handleDigitInput(digit);
       }
     });
   }
 
-  if (btnAdminModalClose) btnAdminModalClose.addEventListener('click', closeLoginModal);
-  if (btnAdminModalCancel) btnAdminModalCancel.addEventListener('click', closeLoginModal);
+  if (btnPinBackspace) btnPinBackspace.addEventListener('click', handleBackspace);
+  if (btnPinClear) btnPinClear.addEventListener('click', handleClear);
 
-  if (adminLoginForm) {
-    adminLoginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const pw = (inputAdminPassword.value || '').trim();
-      if (!pw) return;
+  // Keyboard entry
+  document.addEventListener('keydown', (e) => {
+    if (isPinUnlocked()) return;
 
-      const endpoint = (inputCloudUrl && inputCloudUrl.value.trim()) || currentSettings.remoteConfigUrl || '/api/config';
-      const loginEndpoint = endpoint.replace(/\/config\/?$/, '/login');
+    if (e.key >= '0' && e.key <= '9') {
+      handleDigitInput(e.key);
+    } else if (e.key === 'Backspace') {
+      handleBackspace();
+    } else if (e.key === 'Escape' || e.key === 'Delete') {
+      handleClear();
+    }
+  });
 
-      try {
-        let authOk = false;
-        let token = 'authenticated';
-
-        // Try API login if reachable
-        try {
-          const resp = await fetch(loginEndpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password: pw })
-          });
-          if (resp.ok) {
-            const data = await resp.json();
-            if (data && data.success) {
-              authOk = true;
-              token = data.token || 'authenticated';
-            }
-          }
-        } catch (apiErr) {
-          // Fallback direct password check for offline/standalone
-          if (pw === 'georgesnow2026') {
-            authOk = true;
-            token = 'offline_auth_' + Date.now();
-          }
-        }
-
-        if (pw === 'georgesnow2026') {
-          authOk = true;
-        }
-
-        if (authOk) {
-          sessionStorage.setItem('zg_admin_session_token', token);
-          sessionStorage.setItem('zg_admin_pass', pw);
-          updateAuthBadge();
-          closeLoginModal();
-          showToast('✓ Administrator access unlocked!');
-          if (pendingPublishAfterAuth) {
-            pendingPublishAfterAuth = false;
-            publishSettingsToCloud();
-          }
-        } else {
-          if (adminModalError) {
-            adminModalError.textContent = 'Incorrect passphrase. Please try again.';
-            adminModalError.style.display = 'block';
-          }
-        }
-      } catch (err) {
-        if (adminModalError) {
-          adminModalError.textContent = 'Error: ' + err.message;
-          adminModalError.style.display = 'block';
-        }
-      }
+  // Keep hidden input focused for mobile or screen readers
+  if (pinGateOverlay) {
+    pinGateOverlay.addEventListener('click', () => {
+      if (!isPinUnlocked() && pinHiddenInput) pinHiddenInput.focus();
     });
   }
 
-  // 4. PUBLISH SETTINGS TO CLOUD (AFFECTS ALL USERS)
-  async function publishSettingsToCloud() {
-    if (!isAdminAuthenticated()) {
-      pendingPublishAfterAuth = true;
-      openLoginModal();
-      return;
-    }
-
-    const endpoint = (inputCloudUrl && inputCloudUrl.value.trim()) || currentSettings.remoteConfigUrl || DEFAULT_REMOTE_CONFIG_URL;
-    const pw = sessionStorage.getItem('zg_admin_pass') || 'georgesnow2026';
-    const token = sessionStorage.getItem('zg_admin_session_token') || 'authenticated';
-    const ghToken = localStorage.getItem('zg_gh_token') || (inputGhToken ? inputGhToken.value.trim() : '');
-
-    if (btnPublishCloud) {
-      btnPublishCloud.disabled = true;
-      btnPublishCloud.innerHTML = `
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="zg-spin" style="animation:spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
-        Publishing...
-      `;
-    }
-
-    const payloadConfig = {
-      iconStyle: currentSettings.iconStyle,
-      paletteSize: currentSettings.paletteSize,
-      autoOpenEnabled: currentSettings.autoOpenEnabled,
-      apiToken: currentSettings.apiToken,
-      defaultWorkspaceId: currentSettings.defaultWorkspaceId,
-      shortcuts: currentSettings.shortcuts,
-      announcement: currentSettings.announcement || '',
-      version: '1.4.5',
-      updatedAt: new Date().toISOString()
-    };
-
-    try {
-      let published = false;
-
-      // Option A: If GitHub Token is available, push directly to GitHub repository config.json
-      if (ghToken) {
-        try {
-          const repoApiUrl = 'https://api.github.com/repos/Jorge-GSSF/zengine-power-tools-admin/contents/config.json';
-          // 1. Get current SHA
-          const getResp = await fetch(repoApiUrl, {
-            headers: {
-              'Authorization': `token ${ghToken}`,
-              'Accept': 'application/vnd.github.v3+json'
-            }
-          });
-          let sha = '';
-          if (getResp.ok) {
-            const getData = await getResp.json();
-            sha = getData.sha;
-          }
-
-          // 2. Put file with base64 encoded content
-          const contentStr = JSON.stringify(payloadConfig, null, 2);
-          const b64 = btoa(unescape(encodeURIComponent(contentStr)));
-
-          const putResp = await fetch(repoApiUrl, {
-            method: 'PUT',
-            headers: {
-              'Authorization': `token ${ghToken}`,
-              'Content-Type': 'application/json',
-              'Accept': 'application/vnd.github.v3+json'
-            },
-            body: JSON.stringify({
-              message: `Update central config via Live Admin Portal (${new Date().toLocaleString()})`,
-              content: b64,
-              sha: sha || undefined
-            })
-          });
-
-          if (!putResp.ok) {
-            const errData = await putResp.json().catch(() => ({}));
-            throw new Error(errData.message || `GitHub error ${putResp.status}`);
-          }
-
-          published = true;
-          showToast('☁ Successfully Published to GitHub Cloud! Extensions will sync.');
-        } catch (ghErr) {
-          console.warn('GitHub API publish failed, trying standard endpoint:', ghErr);
-        }
+  // Lock button
+  if (btnLockAdmin) {
+    btnLockAdmin.addEventListener('click', () => {
+      sessionStorage.removeItem('zg_admin_pin_auth');
+      sessionStorage.removeItem('zg_admin_session_token');
+      enteredPin = '';
+      updatePinDots();
+      if (pinErrorMsg) pinErrorMsg.textContent = '';
+      adminMainApp.classList.remove('unlocked');
+      pinGateOverlay.classList.remove('hidden');
+      if (pinHiddenInput) {
+        pinHiddenInput.value = '';
+        pinHiddenInput.focus();
       }
-
-      // Option B: If not pushed to GitHub, try posting to cloud endpoint
-      if (!published && endpoint && !endpoint.endsWith('.json')) {
-        const resp = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            config: payloadConfig,
-            adminPassword: pw
-          })
-        });
-
-        if (!resp.ok) {
-          const errorData = await resp.json().catch(() => ({}));
-          throw new Error(errorData.error || `Server responded with ${resp.status}`);
-        }
-
-        published = true;
-        showToast('☁ Successfully Published to Cloud! All extensions will sync.');
-      }
-
-      // Always save locally to extension/browser storage
-      saveSettings(payloadConfig, false);
-
-      if (published) {
-        markPublishedLive();
-      } else {
-        const tokenInput = prompt(
-          'Cloud Publishing Setup:\n\nTo broadcast these changes live to all extensions worldwide, enter a GitHub Personal Access Token (with repo scope) once:\n\n(It will be saved securely in this browser for instant 1-click publishing in the future)'
-        );
-        if (tokenInput && tokenInput.trim()) {
-          localStorage.setItem('zg_gh_token', tokenInput.trim());
-          if (inputGhToken) inputGhToken.value = tokenInput.trim();
-          showToast('Token saved! Publishing to live cloud...');
-          return publishSettingsToCloud();
-        } else {
-          showToast('Draft saved in browser. Add a GitHub token in Tab 5 to publish live to all users.');
-        }
-      }
-
-      if (storageStatusEl) {
-        storageStatusEl.innerHTML = '<span class="status-dot" style="background:#10b981;"></span> Synced Live';
-      }
-    } catch (err) {
-      alert(`Publish Notice:\n${err.message}\n\nYour settings have been saved locally. To push directly to the live GitHub repository, please enter a GitHub Publisher Token in Tab 5.`);
-    } finally {
-      if (btnPublishCloud) {
-        btnPublishCloud.disabled = false;
-        btnPublishCloud.innerHTML = `
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="m12 12 0 9"></path><path d="m16 16-4-4-4 4"></path></svg>
-          Publish to All Users
-        `;
-      }
-    }
-  }
-
-  if (btnPublishCloud) {
-    btnPublishCloud.addEventListener('click', publishSettingsToCloud);
-  }
-
-  // 5. INITIALIZE & LOAD SETTINGS
-  async function loadSettings() {
-    if (hasExtensionStorage) {
-      chrome.storage.sync.get({
-        autoOpenEnabled: true,
-        paletteSize: 'regular',
-        iconStyle: 'modern',
-        apiToken: DEFAULT_ACCESS_TOKEN,
-        defaultWorkspaceId: '34919',
-        shortcuts: DEFAULT_SHORTCUTS,
-        announcement: '',
-        remoteConfigUrl: DEFAULT_REMOTE_CONFIG_URL
-      }, (items) => {
-        currentSettings = {
-          autoOpenEnabled: items.autoOpenEnabled !== false,
-          paletteSize: items.paletteSize || 'regular',
-          iconStyle: items.iconStyle || 'modern',
-          apiToken: items.apiToken || DEFAULT_ACCESS_TOKEN,
-          defaultWorkspaceId: items.defaultWorkspaceId || '34919',
-          shortcuts: { ...DEFAULT_SHORTCUTS, ...(items.shortcuts || {}) },
-          announcement: items.announcement || '',
-          remoteConfigUrl: items.remoteConfigUrl || DEFAULT_REMOTE_CONFIG_URL
-        };
-        updateUiFromSettings();
-        if (storageStatusEl) {
-          storageStatusEl.innerHTML = '<span class="status-dot"></span> Extension Synced';
-        }
-      });
-    } else {
-      // LocalStorage fallback for standalone web app / Vercel
-      try {
-        const stored = localStorage.getItem('zg_powertools_admin_settings');
-        if (stored) {
-          currentSettings = { ...currentSettings, ...JSON.parse(stored) };
-        }
-      } catch (e) {}
-
-      // In web mode, also try to fetch initial settings from /api/config
-      try {
-        const cloudResp = await fetch('/api/config').catch(() => null);
-        if (cloudResp && cloudResp.ok) {
-          const cloudData = await cloudResp.json();
-          if (cloudData && typeof cloudData === 'object') {
-            currentSettings = { ...currentSettings, ...cloudData };
-          }
-        }
-      } catch (e) {}
-
-      updateUiFromSettings();
-      if (storageStatusEl) {
-        storageStatusEl.innerHTML = '<span class="status-dot" style="background:#3b82f6;box-shadow:0 0 6px #3b82f6;"></span> Standalone Web Mode';
-        storageStatusEl.style.color = '#1d4ed8';
-        storageStatusEl.style.background = '#eff6ff';
-        storageStatusEl.style.borderColor = '#bfdbfe';
-      }
-    }
-    updateAuthBadge();
-  }
-
-  let hasUnpublishedChanges = false;
-
-  function markUnpublishedChanges() {
-    hasUnpublishedChanges = true;
-    if (storageStatusEl && !hasExtensionStorage) {
-      storageStatusEl.innerHTML = '<span class="status-dot" style="background:#f59e0b; box-shadow:0 0 6px #f59e0b;"></span> Draft Edits (Click Publish to Broadcast)';
-      storageStatusEl.style.color = '#b45309';
-      storageStatusEl.style.background = '#fffbeb';
-      storageStatusEl.style.borderColor = '#fde68a';
-    }
-  }
-
-  function markPublishedLive() {
-    hasUnpublishedChanges = false;
-    if (storageStatusEl) {
-      storageStatusEl.innerHTML = '<span class="status-dot" style="background:#10b981; box-shadow:0 0 6px #10b981;"></span> Published Live to Cloud';
-      storageStatusEl.style.color = '#047857';
-      storageStatusEl.style.background = '#ecfdf5';
-      storageStatusEl.style.borderColor = '#a7f3d0';
-    }
-  }
-
-  function saveSettings(partial, notify = false) {
-    currentSettings = { ...currentSettings, ...partial };
-    if (hasExtensionStorage) {
-      chrome.storage.sync.set(partial, () => {
-        if (notify) showToast('Settings saved to extension storage!');
-      });
-    } else {
-      try {
-        localStorage.setItem('zg_powertools_admin_settings', JSON.stringify(currentSettings));
-        if (notify) showToast('Draft saved!');
-      } catch (e) {}
-    }
-    renderSimulator();
-    markUnpublishedChanges();
-  }
-
-  function updateUiFromSettings() {
-    if (toggleAutoOpen) toggleAutoOpen.checked = currentSettings.autoOpenEnabled;
-    if (selectPaletteSize) selectPaletteSize.value = currentSettings.paletteSize;
-    if (selectPrimaryWs) selectPrimaryWs.value = currentSettings.defaultWorkspaceId;
-    if (inputApiToken) inputApiToken.value = currentSettings.apiToken;
-    if (inputCloudUrl) inputCloudUrl.value = currentSettings.remoteConfigUrl || DEFAULT_REMOTE_CONFIG_URL;
-    if (inputAnnouncement) inputAnnouncement.value = currentSettings.announcement || '';
-    if (inputGhToken) inputGhToken.value = localStorage.getItem('zg_gh_token') || '';
-
-    // Update Icon Style Cards
-    iconStyleCards.forEach(card => {
-      const style = card.getAttribute('data-style');
-      card.classList.toggle('selected', style === currentSettings.iconStyle);
-    });
-
-    renderHotkeyTable();
-    renderSimulator();
-    updateAuthBadge();
-  }
-
-  if (btnSaveGhToken) {
-    btnSaveGhToken.addEventListener('click', () => {
-      const val = (inputGhToken ? inputGhToken.value.trim() : '');
-      if (val) {
-        localStorage.setItem('zg_gh_token', val);
-        showToast('✓ GitHub Publisher Token saved securely in browser!');
-      } else {
-        localStorage.removeItem('zg_gh_token');
-        showToast('GitHub Publisher Token removed.');
-      }
+      showToast('Admin session locked');
     });
   }
 
+  // Initialize PIN state
+  if (isPinUnlocked()) {
+    pinGateOverlay.classList.add('hidden');
+    adminMainApp.classList.add('unlocked');
+  } else {
+    adminMainApp.classList.remove('unlocked');
+    pinGateOverlay.classList.remove('hidden');
+    setTimeout(() => pinHiddenInput && pinHiddenInput.focus(), 150);
+  }
+
+  // =========================================================================
   // 4. TAB NAVIGATION
+  // =========================================================================
   navTabs.forEach(tab => {
     tab.addEventListener('click', () => {
       const target = tab.getAttribute('data-tab');
@@ -509,181 +232,133 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 5. ICON STYLE SWITCHING
+  // =========================================================================
+  // 5. STORAGE & INITIAL LOAD
+  // =========================================================================
+  const hasExtensionStorage = typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync;
+
+  async function loadInitialSettings() {
+    let loaded = false;
+
+    // A. First check extension storage if running inside extension
+    if (hasExtensionStorage) {
+      await new Promise(resolve => {
+        chrome.storage.sync.get(null, (items) => {
+          if (items && Object.keys(items).length > 0) {
+            currentSettings = { ...currentSettings, ...items };
+            loaded = true;
+          }
+          resolve();
+        });
+      });
+    }
+
+    // B. Fetch live cloud config with cache-busting timestamp
+    try {
+      const cloudUrl = (inputCloudUrl && inputCloudUrl.value.trim()) || DEFAULT_REMOTE_CONFIG_URL;
+      const resp = await fetch(`${cloudUrl}?_t=${Date.now()}`, { cache: 'no-store' });
+      if (resp.ok) {
+        const cloudData = await resp.json();
+        if (cloudData && typeof cloudData === 'object') {
+          currentSettings = { ...currentSettings, ...cloudData };
+          if (storageStatusText) storageStatusText.textContent = 'Live Synced';
+          loaded = true;
+        }
+      }
+    } catch (e) {
+      console.warn('Could not fetch cloud config on load:', e);
+    }
+
+    // C. Check saved GitHub PAT token
+    const savedGh = localStorage.getItem('zg_admin_gh_token') || '';
+    if (inputGhToken) inputGhToken.value = savedGh;
+
+    applySettingsToUI();
+  }
+
+  function applySettingsToUI() {
+    // Icon Style
+    iconStyleCards.forEach(c => {
+      c.classList.toggle('selected', c.getAttribute('data-style') === (currentSettings.iconStyle || 'modern'));
+    });
+
+    // Palette Size
+    if (selectPaletteSize) selectPaletteSize.value = currentSettings.paletteSize || 'regular';
+
+    // Auto Open
+    if (toggleAutoOpen) toggleAutoOpen.checked = currentSettings.autoOpenEnabled !== false;
+
+    // API Token
+    if (inputApiToken) inputApiToken.value = currentSettings.apiToken || DEFAULT_ACCESS_TOKEN;
+
+    // Announcement
+    if (inputAnnouncement) inputAnnouncement.value = currentSettings.announcement || '';
+
+    // Hotkey table
+    renderHotkeyTable();
+  }
+
+  function saveLocalSettings(updates) {
+    currentSettings = { ...currentSettings, ...updates };
+    if (hasExtensionStorage) {
+      chrome.storage.sync.set(updates);
+    }
+    localStorage.setItem('zg_admin_cached_config', JSON.stringify(currentSettings));
+  }
+
+  // =========================================================================
+  // 6. ICON DESIGN SYSTEM CONTROLS
+  // =========================================================================
   iconStyleCards.forEach(card => {
     card.addEventListener('click', () => {
       const style = card.getAttribute('data-style');
-      iconStyleCards.forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      saveSettings({ iconStyle: style });
+      iconStyleCards.forEach(c => c.classList.toggle('selected', c === card));
+      currentSettings.iconStyle = style;
+      saveLocalSettings({ iconStyle: style });
+      showToast(`Quick Search Icon style set to ${card.querySelector('h3').textContent}`);
     });
   });
 
-  // 6. TOGGLE CONTROLS
-  if (toggleAutoOpen) {
-    toggleAutoOpen.addEventListener('change', () => {
-      saveSettings({ autoOpenEnabled: toggleAutoOpen.checked });
-    });
-  }
-
   if (selectPaletteSize) {
     selectPaletteSize.addEventListener('change', () => {
-      saveSettings({ paletteSize: selectPaletteSize.value });
+      currentSettings.paletteSize = selectPaletteSize.value;
+      saveLocalSettings({ paletteSize: selectPaletteSize.value });
+      showToast(`Command Palette size set to ${selectPaletteSize.value === 'large' ? 'Expanded (920px)' : 'Regular (640px)'}`);
     });
   }
 
-  if (selectPrimaryWs) {
-    selectPrimaryWs.addEventListener('change', () => {
-      saveSettings({ defaultWorkspaceId: selectPrimaryWs.value });
+  if (toggleAutoOpen) {
+    toggleAutoOpen.addEventListener('change', () => {
+      currentSettings.autoOpenEnabled = toggleAutoOpen.checked;
+      saveLocalSettings({ autoOpenEnabled: toggleAutoOpen.checked });
+      showToast(`Auto-open Disbursements Tab ${toggleAutoOpen.checked ? 'Enabled' : 'Disabled'}`);
     });
   }
 
-  if (btnSaveToken) {
-    btnSaveToken.addEventListener('click', () => {
-      const token = (inputApiToken.value || '').trim();
-      if (!token) return;
-      saveSettings({ apiToken: token });
-      showToast('Zengine API Access Token updated!');
-    });
-  }
-
-  // 7. LIVE SIMULATOR LOGIC
-  const SAMPLE_ITEMS = [
-    {
-      category: 'Students',
-      iconKey: 'students',
-      title: 'Ava Allen',
-      desc: 'Form 185591 • Balance: $4,500.00 • Class of 2024',
-      badge: 'Student #89302',
-      hasDisb: true
-    },
-    {
-      category: 'Disbursements',
-      iconKey: 'disbursements',
-      title: 'Disbursement $1,250.00',
-      desc: 'Form 185672 • Florida Atlantic University • Fall 2024',
-      badge: '$1,250.00',
-      hasDisb: false
-    },
-    {
-      category: 'Awards',
-      iconKey: 'awards',
-      title: 'George Snow Endowed Excellence Grant',
-      desc: 'Form 185593 • Scholar: Ava Allen • Year: 2024',
-      badge: '$5,000.00',
-      hasDisb: true
-    },
-    {
-      category: 'Emergency Grants',
-      iconKey: 'emergency',
-      title: 'Emergency Assistance — Ava Allen',
-      desc: 'Form 370408 • Rapid Relief • Approved',
-      badge: '$750.00',
-      hasDisb: false
-    },
-    {
-      category: 'Payees & Vendors',
-      iconKey: 'payees',
-      title: 'Florida Atlantic University',
-      desc: 'Form 185766 • Boca Raton, FL • Approved College',
-      badge: 'Payee #1842',
-      hasDisb: false
-    },
-    {
-      category: 'Quick Actions',
-      iconKey: 'link',
-      title: 'Copy Clean Record Link',
-      desc: 'Direct permalink to current record without tracking hashes',
-      badge: 'Alt + L',
-      hasDisb: false
-    }
-  ];
-
-  function getMockIconHtml(item) {
-    const style = currentSettings.iconStyle || 'modern';
-    if (style === 'none') {
-      return '';
-    }
-    if (style === 'emoji') {
-      return `<span class="mockup-item-icon emoji">${EMOJI_MAP[item.iconKey] || '📄'}</span>`;
-    }
-    return `<span class="mockup-item-icon modern">${MODERN_ICONS[item.iconKey] || MODERN_ICONS['form']}</span>`;
-  }
-
-  function renderSimulator() {
-    if (!simulatorList) return;
-    const q = (simulatorInput ? simulatorInput.value : '').toLowerCase().trim();
-    simulatorList.innerHTML = '';
-
-    const filtered = SAMPLE_ITEMS.filter(item => 
-      !q || item.title.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q) || item.category.toLowerCase().includes(q)
-    );
-
-    let currentCat = '';
-    filtered.forEach((item, idx) => {
-      if (item.category !== currentCat) {
-        currentCat = item.category;
-        const catLi = document.createElement('li');
-        catLi.className = 'mockup-category';
-        catLi.textContent = currentCat;
-        simulatorList.appendChild(catLi);
-      }
-
-      const li = document.createElement('li');
-      li.className = `mockup-item ${idx === 0 ? 'active' : ''}`;
-      li.innerHTML = `
-        <div class="mockup-item-left">
-          ${getMockIconHtml(item)}
-          <div class="mockup-item-text">
-            <span class="mockup-item-title">${item.title}</span>
-            <span class="mockup-item-desc">${item.desc}</span>
-          </div>
-        </div>
-        <div class="mockup-item-right">
-          ${item.hasDisb ? `
-            <button type="button" class="mockup-disb-btn">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-              + Disb
-            </button>
-          ` : ''}
-          <span class="mockup-badge">${item.badge}</span>
-        </div>
-      `;
-      simulatorList.appendChild(li);
-    });
-  }
-
-  if (simulatorInput) {
-    simulatorInput.addEventListener('input', renderSimulator);
-  }
-
-  if (simulatorCloseBtn) {
-    simulatorCloseBtn.addEventListener('click', () => {
-      showToast('Close button [✕] clicked! (Simulates dismissing search popup)');
-    });
-  }
-
-  // 8. HOTKEY TABLE
+  // =========================================================================
+  // 7. HOTKEYS REMAPPING & TABLE
+  // =========================================================================
   let activeRecordingId = null;
 
   function renderHotkeyTable() {
     if (!hotkeyTableBody) return;
     hotkeyTableBody.innerHTML = '';
 
-    const list = Object.values(currentSettings.shortcuts);
-    list.forEach(sc => {
+    const shortcuts = currentSettings.shortcuts || DEFAULT_SHORTCUTS;
+
+    Object.values(shortcuts).forEach(sc => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>
-          <div class="hotkey-name">${sc.label}</div>
-          <div class="hotkey-desc">${sc.desc}</div>
+          <div class="hotkey-action-title">${sc.label}</div>
+          <div class="hotkey-action-desc">${sc.desc}</div>
         </td>
         <td>
-          <button type="button" class="hotkey-badge ${activeRecordingId === sc.id ? 'recording' : ''}" data-id="${sc.id}">
-            ${activeRecordingId === sc.id ? 'Press keys...' : sc.display}
-          </button>
+          <span class="hotkey-badge ${activeRecordingId === sc.id ? 'recording' : ''}" data-id="${sc.id}">
+            ${activeRecordingId === sc.id ? 'Press Key...' : sc.display}
+          </span>
         </td>
-        <td>
+        <td style="text-align:right;">
           <label class="switch">
             <input type="checkbox" data-id="${sc.id}" class="hotkey-toggle" ${sc.enabled ? 'checked' : ''}>
             <span class="slider"></span>
@@ -693,21 +368,10 @@ document.addEventListener('DOMContentLoaded', () => {
       hotkeyTableBody.appendChild(tr);
     });
 
-    // Wire up toggles
-    hotkeyTableBody.querySelectorAll('.hotkey-toggle').forEach(chk => {
-      chk.addEventListener('change', () => {
-        const id = chk.getAttribute('data-id');
-        if (currentSettings.shortcuts[id]) {
-          currentSettings.shortcuts[id].enabled = chk.checked;
-          saveSettings({ shortcuts: currentSettings.shortcuts });
-        }
-      });
-    });
-
-    // Wire up badges for recording
-    hotkeyTableBody.querySelectorAll('.hotkey-badge').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id');
+    // Remap badge clicks
+    hotkeyTableBody.querySelectorAll('.hotkey-badge').forEach(badge => {
+      badge.addEventListener('click', () => {
+        const id = badge.getAttribute('data-id');
         if (activeRecordingId === id) {
           activeRecordingId = null;
           renderHotkeyTable();
@@ -717,11 +381,24 @@ document.addEventListener('DOMContentLoaded', () => {
         renderHotkeyTable();
       });
     });
+
+    // Toggle switch listeners
+    hotkeyTableBody.querySelectorAll('.hotkey-toggle').forEach(t => {
+      t.addEventListener('change', () => {
+        const id = t.getAttribute('data-id');
+        if (currentSettings.shortcuts && currentSettings.shortcuts[id]) {
+          currentSettings.shortcuts[id].enabled = t.checked;
+          saveLocalSettings({ shortcuts: currentSettings.shortcuts });
+          showToast(`${currentSettings.shortcuts[id].label} ${t.checked ? 'enabled' : 'disabled'}`);
+        }
+      });
+    });
   }
 
-  // Window keydown listener for remapping hotkeys
-  window.addEventListener('keydown', (e) => {
+  // Key Recording Listener
+  document.addEventListener('keydown', (e) => {
     if (!activeRecordingId) return;
+
     e.preventDefault();
     e.stopPropagation();
 
@@ -731,24 +408,34 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const key = e.key.toLowerCase();
-    if (['control', 'shift', 'alt', 'meta'].includes(key)) return;
-
     const parts = [];
     if (e.ctrlKey) parts.push('ctrl');
     if (e.altKey) parts.push('alt');
     if (e.shiftKey) parts.push('shift');
     if (e.metaKey) parts.push('meta');
-    parts.push(key);
 
-    const combo = parts.join('+');
-    const display = parts.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' + ');
+    let mainKey = e.key.toLowerCase();
+    if (['control', 'alt', 'shift', 'meta'].includes(mainKey)) {
+      return; // Wait for non-modifier key
+    }
 
-    if (currentSettings.shortcuts[activeRecordingId]) {
-      currentSettings.shortcuts[activeRecordingId].key = combo;
-      currentSettings.shortcuts[activeRecordingId].display = display;
-      saveSettings({ shortcuts: currentSettings.shortcuts });
-      showToast(`Hotkey for "${currentSettings.shortcuts[activeRecordingId].label}" updated to ${display}!`);
+    if (mainKey === ' ') mainKey = 'space';
+    parts.push(mainKey);
+
+    const comboKey = parts.join('+');
+    const displayCombo = parts.map(p => {
+      if (p === 'ctrl') return 'Ctrl';
+      if (p === 'alt') return 'Alt';
+      if (p === 'shift') return 'Shift';
+      if (p === 'meta') return 'Cmd';
+      return p.toUpperCase();
+    }).join(' + ');
+
+    if (currentSettings.shortcuts && currentSettings.shortcuts[activeRecordingId]) {
+      currentSettings.shortcuts[activeRecordingId].key = comboKey;
+      currentSettings.shortcuts[activeRecordingId].display = displayCombo;
+      saveLocalSettings({ shortcuts: currentSettings.shortcuts });
+      showToast(`Key recorded: ${displayCombo}`);
     }
 
     activeRecordingId = null;
@@ -757,149 +444,265 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnResetAllHotkeys) {
     btnResetAllHotkeys.addEventListener('click', () => {
-      currentSettings.shortcuts = JSON.parse(JSON.stringify(DEFAULT_SHORTCUTS));
-      saveSettings({ shortcuts: currentSettings.shortcuts });
-      renderHotkeyTable();
-      showToast('All hotkeys restored to factory defaults!');
+      if (confirm('Reset all keyboard shortcuts to factory defaults?')) {
+        currentSettings.shortcuts = JSON.parse(JSON.stringify(DEFAULT_SHORTCUTS));
+        saveLocalSettings({ shortcuts: currentSettings.shortcuts });
+        renderHotkeyTable();
+        showToast('All shortcuts reset to defaults.');
+      }
     });
   }
 
-  // 9. API TOKEN TESTER
-  if (btnTestToken) {
-    btnTestToken.addEventListener('click', async () => {
-      const token = (inputApiToken.value || '').trim();
-      if (!token) {
-        showToast('Please enter an API Token to test.');
-        return;
-      }
-      tokenTestResult.style.display = 'block';
-      tokenTestResult.innerHTML = '<span style="color:#64748b;">Testing connection to Zengine API (https://api.zenginehq.com)...</span>';
+  // =========================================================================
+  // 8. CLOUD PUBLISHING ENGINE (1-CLICK DIRECT GITHUB COMMIT)
+  // =========================================================================
+  async function publishToCloud() {
+    let ghToken = (inputGhToken ? inputGhToken.value.trim() : '') || localStorage.getItem('zg_admin_gh_token');
 
-      const startTime = Date.now();
-      try {
-        const testUrl = `https://api.zenginehq.com/v1/forms/185591/records.json?access_token=${token}&limit=1`;
-        const resp = await fetch(testUrl);
-        const duration = Date.now() - startTime;
-        if (resp.ok) {
-          const data = await resp.json();
-          tokenTestResult.innerHTML = `
-            <div style="color:#047857;background:#ecfdf5;border:1px solid #a7f3d0;padding:10px 14px;border-radius:6px;font-size:12.5px;">
-              <strong>✓ Connection Successful!</strong> Connected in ${duration}ms.<br>
-              Workspace 34919 Form 185591 verified. Total records accessible.
-            </div>
-          `;
-        } else {
-          tokenTestResult.innerHTML = `
-            <div style="color:#b91c1c;background:#fee2e2;border:1px solid #fca5a5;padding:10px 14px;border-radius:6px;font-size:12.5px;">
-              <strong>✕ Connection Failed:</strong> HTTP Status ${resp.status} (${resp.statusText})<br>
-              Check if the access token is valid and has permissions for workspace 34919.
-            </div>
-          `;
+    if (!ghToken) {
+      ghToken = prompt('Enter your GitHub Personal Access Token (PAT) with repo permissions to publish:');
+      if (!ghToken) return;
+      localStorage.setItem('zg_admin_gh_token', ghToken);
+      if (inputGhToken) inputGhToken.value = ghToken;
+    }
+
+    if (btnPublishCloud) {
+      btnPublishCloud.disabled = true;
+      btnPublishCloud.innerHTML = `
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="zg-spin" style="animation:spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+        Publishing...
+      `;
+    }
+
+    const payloadConfig = {
+      iconStyle: currentSettings.iconStyle,
+      paletteSize: currentSettings.paletteSize,
+      autoOpenEnabled: currentSettings.autoOpenEnabled,
+      apiToken: currentSettings.apiToken || DEFAULT_ACCESS_TOKEN,
+      defaultWorkspaceId: currentSettings.defaultWorkspaceId || '34919',
+      shortcuts: currentSettings.shortcuts,
+      announcement: (inputAnnouncement ? inputAnnouncement.value.trim() : '') || currentSettings.announcement || '',
+      version: '1.4.5',
+      updatedAt: new Date().toISOString()
+    };
+
+    try {
+      const repoApiUrl = 'https://api.github.com/repos/Jorge-GSSF/zengine-power-tools-admin/contents/config.json';
+      
+      // 1. Get current SHA
+      const getResp = await fetch(repoApiUrl, {
+        headers: {
+          'Authorization': `token ${ghToken}`,
+          'Accept': 'application/vnd.github.v3+json'
         }
-      } catch (err) {
-        tokenTestResult.innerHTML = `
-          <div style="color:#b91c1c;background:#fee2e2;border:1px solid #fca5a5;padding:10px 14px;border-radius:6px;font-size:12.5px;">
-            <strong>✕ Network Error:</strong> ${err.message}<br>
-            If testing from a standard browser tab, ensure CORS or extension host permissions allow platform.zenginehq.com.
-          </div>
+      });
+
+      let sha = '';
+      if (getResp.ok) {
+        const getData = await getResp.json();
+        sha = getData.sha;
+      }
+
+      // 2. Put file with base64 encoded content
+      const contentStr = JSON.stringify(payloadConfig, null, 2);
+      const b64 = btoa(unescape(encodeURIComponent(contentStr)));
+
+      const putResp = await fetch(repoApiUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `token ${ghToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/vnd.github.v3+json'
+        },
+        body: JSON.stringify({
+          message: `Update central config via Live Admin Portal (${new Date().toLocaleString()})`,
+          content: b64,
+          sha: sha || undefined
+        })
+      });
+
+      if (!putResp.ok) {
+        const errData = await putResp.json().catch(() => ({}));
+        throw new Error(errData.message || `GitHub error ${putResp.status}`);
+      }
+
+      // Save locally too
+      saveLocalSettings(payloadConfig);
+      localStorage.setItem('zg_admin_gh_token', ghToken);
+
+      showToast('☁ Successfully Published to Cloud! Extensions will sync.');
+      if (storageStatusText) storageStatusText.textContent = 'Live Synced';
+
+    } catch (err) {
+      alert(`Publish failed: ${err.message}. If token expired, clear it and re-enter.`);
+      console.error(err);
+    } finally {
+      if (btnPublishCloud) {
+        btnPublishCloud.disabled = false;
+        btnPublishCloud.innerHTML = `
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="m12 12 0 9"></path><path d="m16 16-4-4-4 4"></path></svg>
+          Publish to All Users
         `;
       }
+    }
+  }
+
+  if (btnPublishCloud) btnPublishCloud.addEventListener('click', publishToCloud);
+
+  if (btnSaveGhToken && inputGhToken) {
+    btnSaveGhToken.addEventListener('click', () => {
+      const val = inputGhToken.value.trim();
+      localStorage.setItem('zg_admin_gh_token', val);
+      showToast(val ? 'GitHub PAT token saved!' : 'GitHub PAT cleared.');
     });
   }
 
-  // 10. EXPORT & IMPORT JSON
+  // =========================================================================
+  // 9. API TOKEN & DIAGNOSTICS
+  // =========================================================================
+  if (btnSaveToken && inputApiToken) {
+    btnSaveToken.addEventListener('click', () => {
+      const token = inputApiToken.value.trim();
+      currentSettings.apiToken = token;
+      saveLocalSettings({ apiToken: token });
+      showToast('API Access Token saved!');
+    });
+  }
+
+  if (btnTestToken && inputApiToken) {
+    btnTestToken.addEventListener('click', async () => {
+      const token = inputApiToken.value.trim();
+      if (!token) {
+        alert('Please enter an API token to test.');
+        return;
+      }
+      btnTestToken.disabled = true;
+      btnTestToken.textContent = 'Testing...';
+      if (tokenTestResult) tokenTestResult.style.display = 'none';
+
+      try {
+        const resp = await fetch('https://api.zenginehq.com/v1/workspaces/34919.json', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await resp.json();
+        if (resp.ok && data && data.data) {
+          if (tokenTestResult) {
+            tokenTestResult.style.display = 'block';
+            tokenTestResult.style.color = '#059669';
+            tokenTestResult.innerHTML = `✓ Connected to Workspace <strong>${data.data.name || '34919'}</strong> successfully!`;
+          }
+          showToast('✓ Zengine API Connection Verified!');
+        } else {
+          throw new Error(data?.userMessage || `API returned status ${resp.status}`);
+        }
+      } catch (err) {
+        if (tokenTestResult) {
+          tokenTestResult.style.display = 'block';
+          tokenTestResult.style.color = '#dc2626';
+          tokenTestResult.innerHTML = `⚠️ Connection error: ${err.message}`;
+        }
+      } finally {
+        btnTestToken.disabled = false;
+        btnTestToken.textContent = 'Test Connection';
+      }
+    });
+  }
+
+  // =========================================================================
+  // 10. CLOUD ENDPOINT TEST
+  // =========================================================================
+  if (btnTestCloudUrl && inputCloudUrl) {
+    btnTestCloudUrl.addEventListener('click', async () => {
+      const url = inputCloudUrl.value.trim();
+      btnTestCloudUrl.disabled = true;
+      btnTestCloudUrl.textContent = 'Testing...';
+      if (cloudTestResult) cloudTestResult.style.display = 'none';
+
+      try {
+        const resp = await fetch(`${url}?_t=${Date.now()}`, { cache: 'no-store' });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        if (cloudTestResult) {
+          cloudTestResult.style.display = 'block';
+          cloudTestResult.style.background = '#ecfdf5';
+          cloudTestResult.style.color = '#047857';
+          cloudTestResult.style.border = '1px solid #a7f3d0';
+          cloudTestResult.innerHTML = `✓ Cloud endpoint active! Icon Style: <strong>${data.iconStyle || 'none'}</strong>, Updated: ${new Date(data.updatedAt || Date.now()).toLocaleTimeString()}`;
+        }
+      } catch (e) {
+        if (cloudTestResult) {
+          cloudTestResult.style.display = 'block';
+          cloudTestResult.style.background = '#fef2f2';
+          cloudTestResult.style.color = '#b91c1c';
+          cloudTestResult.style.border = '1px solid #fecaca';
+          cloudTestResult.textContent = `⚠️ Cloud test failed: ${e.message}`;
+        }
+      } finally {
+        btnTestCloudUrl.disabled = false;
+        btnTestCloudUrl.textContent = 'Test Cloud API';
+      }
+    });
+  }
+
+  // =========================================================================
+  // 11. IMPORT / EXPORT JSON
+  // =========================================================================
   if (btnExportJson) {
     btnExportJson.addEventListener('click', () => {
-      const json = JSON.stringify(currentSettings, null, 2);
-      navigator.clipboard.writeText(json).then(() => {
-        showToast('✓ Settings JSON copied to clipboard!');
-      }).catch(() => {
-        prompt('Copy your settings JSON:', json);
-      });
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(currentSettings, null, 2));
+      const a = document.createElement('a');
+      a.setAttribute('href', dataStr);
+      a.setAttribute('download', `zengine-settings-${new Date().toISOString().slice(0, 10)}.json`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      showToast('Settings exported as JSON!');
     });
   }
 
   if (btnImportJson) {
     btnImportJson.addEventListener('click', () => {
-      const input = prompt('Paste your settings JSON profile here:');
-      if (!input) return;
-      try {
-        const parsed = JSON.parse(input);
-        saveSettings(parsed);
-        updateUiFromSettings();
-        showToast('✓ Settings imported successfully!');
-      } catch (e) {
-        alert('Invalid JSON format: ' + e.message);
-      }
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json,application/json';
+      input.onchange = (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (re) => {
+          try {
+            const parsed = JSON.parse(re.target.result);
+            if (parsed && typeof parsed === 'object') {
+              currentSettings = { ...currentSettings, ...parsed };
+              saveLocalSettings(currentSettings);
+              applySettingsToUI();
+              showToast('Settings successfully imported!');
+            }
+          } catch (err) {
+            alert('Invalid JSON file.');
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
     });
   }
 
-  // 11. CLOUD ENDPOINT & BROADCAST TEST
-  if (btnTestCloudUrl) {
-    btnTestCloudUrl.addEventListener('click', async () => {
-      const url = (inputCloudUrl ? inputCloudUrl.value.trim() : '') || currentSettings.remoteConfigUrl;
-      if (!cloudTestResult) return;
-      cloudTestResult.style.display = 'block';
-      cloudTestResult.innerHTML = '<span style="color:#2563eb;">Connecting to cloud endpoint...</span>';
-      const start = Date.now();
-      try {
-        const resp = await fetch(url, { cache: 'no-store' });
-        const latency = Date.now() - start;
-        if (!resp.ok) {
-          throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
-        }
-        const data = await resp.json();
-        cloudTestResult.innerHTML = `
-          <div style="color:#047857; background:#ecfdf5; border:1px solid #a7f3d0; padding:10px 14px; border-radius:6px;">
-            <strong>✓ Cloud Endpoint Connected (${latency}ms)</strong><br>
-            Current Icon Style: <code>${data.iconStyle || 'modern'}</code> | Default Workspace: <code>${data.defaultWorkspaceId || '34919'}</code><br>
-            Last Published: <code>${data.updatedAt || 'Default'}</code>
-          </div>
-        `;
-      } catch (err) {
-        cloudTestResult.innerHTML = `
-          <div style="color:#b91c1c; background:#fee2e2; border:1px solid #fca5a5; padding:10px 14px; border-radius:6px;">
-            <strong>✕ Cloud Connection Failed:</strong> ${err.message}<br>
-            Ensure the server is running or deployed on Vercel with CORS enabled.
-          </div>
-        `;
-      }
-    });
-  }
-
-  if (inputCloudUrl) {
-    inputCloudUrl.addEventListener('change', () => {
-      saveSettings({ remoteConfigUrl: inputCloudUrl.value.trim() });
-    });
-  }
-
-  if (inputAnnouncement) {
-    inputAnnouncement.addEventListener('change', () => {
-      saveSettings({ announcement: inputAnnouncement.value.trim() });
-    });
-  }
-
-  // 12. TOAST HELPER
+  // =========================================================================
+  // 12. TOAST SYSTEM
+  // =========================================================================
   function showToast(msg) {
-    let container = document.getElementById('adminToastContainer');
-    if (!container) {
-      container = document.createElement('div');
-      container.id = 'adminToastContainer';
-      container.className = 'admin-toast-container';
-      document.body.appendChild(container);
-    }
+    const container = document.getElementById('adminToastContainer');
+    if (!container) return;
     const toast = document.createElement('div');
     toast.className = 'admin-toast';
-    toast.innerHTML = `<span>⚡</span><span>${msg}</span>`;
+    toast.textContent = msg;
     container.appendChild(toast);
     setTimeout(() => {
-      toast.style.opacity = '0';
-      toast.style.transform = 'translateY(10px)';
-      toast.style.transition = 'all 0.2s ease';
-      setTimeout(() => toast.remove(), 200);
-    }, 2800);
+      toast.remove();
+    }, 2400);
   }
 
-  // Run on start
-  loadSettings();
+  // Load everything
+  loadInitialSettings();
 });
