@@ -1,5 +1,5 @@
 {
-  "iconStyle": "emoji",
+  "iconStyle": "none",
   "paletteSize": "regular",
   "autoOpenEnabled": true,
   "apiToken": "644cc1ee38244d57d7b458eaf29d2b714fb7e267",
@@ -128,5 +128,5 @@
   },
   "announcement": "",
   "version": "1.4.5",
-  "updatedAt": "2026-10-21T00:06:05.482Z"
+  "updatedAt": "2026-10-21T00:06:51.558Z"
 }
