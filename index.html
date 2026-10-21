@@ -75,7 +75,7 @@
         <div class="brand-text">
           <h1>
             Zengine Power-Tools Admin
-            <span class="version-pill">v1.5.1</span>
+            <span class="version-pill">v1.5.2</span>
           </h1>
           <p>George Snow Scholarship Fund • Central Management</p>
         </div>
@@ -110,33 +110,7 @@
 
     <!-- Compact Navigation Tabs -->
     <nav class="admin-nav">
-      <button type="button" class="admin-nav-tab active" data-tab="aesthetics">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <path d="m4.93 4.93 4.24 4.24"></path>
-          <path d="m14.83 9.17 4.24-4.24"></path>
-          <path d="m14.83 14.83 4.24 4.24"></path>
-          <path d="m9.17 14.83-4.24 4.24"></path>
-          <circle cx="12" cy="12" r="4"></circle>
-        </svg>
-        <span>Search Aesthetics &amp; Icons</span>
-      </button>
-
-      <button type="button" class="admin-nav-tab" data-tab="hotkeys">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
-          <line x1="6" y1="8" x2="6" y2="8"></line>
-          <line x1="10" y1="8" x2="10" y2="8"></line>
-          <line x1="14" y1="8" x2="14" y2="8"></line>
-          <line x1="18" y1="8" x2="18" y2="8"></line>
-          <line x1="6" y1="12" x2="6" y2="12"></line>
-          <line x1="18" y1="12" x2="18" y2="12"></line>
-          <line x1="8" y1="16" x2="16" y2="16"></line>
-        </svg>
-        <span>Keyboard Shortcuts</span>
-      </button>
-
-      <button type="button" class="admin-nav-tab" data-tab="workspaces">
+      <button type="button" class="admin-nav-tab active" data-tab="workspaces">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
           <polyline points="9 22 9 12 15 12 15 22"></polyline>
@@ -161,140 +135,7 @@
     </nav>
 
     <!-- TAB 1: Search Aesthetics & Icons -->
-    <section class="tab-content active" id="tab-aesthetics">
-      
-      <div class="card">
-        <h2 class="card-title">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
-          Quick Search Icon Design System
-        </h2>
-        <p class="card-desc">
-          Select visual presentation for Spotlight Command Palette (<kbd>Ctrl + K</kbd>). Changes push live to all team members worldwide.
-        </p>
-
-        <div class="icon-styles-grid">
-          
-          <!-- Option A: Modern Minimalist (Vector Outlines) -->
-          <div class="icon-style-card selected" data-style="modern">
-            <div class="icon-card-header">
-              <span class="icon-radio-circle"></span>
-              <h3>Modern Minimalist</h3>
-              <span class="badge-recommended">Recommended</span>
-            </div>
-            <div class="icon-preview-row">
-              <span class="icon-sample" title="Scholar">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
-              </span>
-              <span class="icon-sample" title="Disbursement">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
-              </span>
-              <span class="icon-sample" title="Award">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path></svg>
-              </span>
-              <span class="icon-sample" title="Payee">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="18" x="4" y="3" rx="2"></rect><line x1="8" y1="7" x2="8" y2="7"></line><line x1="16" y1="7" x2="16" y2="7"></line></svg>
-              </span>
-            </div>
-            <p class="icon-style-desc">
-              Clean monochrome SVG vector outlines. Replaces kiddish emojis with crisp typography badges.
-            </p>
-          </div>
-
-          <!-- Option B: Text-Only (Hide Icons) -->
-          <div class="icon-style-card" data-style="none">
-            <div class="icon-card-header">
-              <span class="icon-radio-circle"></span>
-              <h3>Text-Only (No Icons)</h3>
-            </div>
-            <div class="icon-preview-row">
-              <span class="text-sample">STUDENTS</span>
-              <span class="text-sample">AWARDS</span>
-              <span class="text-sample">PAYEES</span>
-            </div>
-            <p class="icon-style-desc">
-              Hides all icons and emojis. Ultra-minimal, high-density typographic layout.
-            </p>
-          </div>
-
-          <!-- Option C: Classic Emojis -->
-          <div class="icon-style-card" data-style="emoji">
-            <div class="icon-card-header">
-              <span class="icon-radio-circle"></span>
-              <h3>Classic Emojis</h3>
-            </div>
-            <div class="icon-preview-row">
-              <span style="font-size: 15px;">🎓</span>
-              <span style="font-size: 15px;">💰</span>
-              <span style="font-size: 15px;">🏆</span>
-              <span style="font-size: 15px;">🏛️</span>
-              <span style="font-size: 15px;">🚨</span>
-            </div>
-            <p class="icon-style-desc">
-              Legacy standard emoji symbols (graduation caps, money bags, trophies).
-            </p>
-          </div>
-
-        </div>
-
-        <!-- Compact Options Rows -->
-        <div class="form-row">
-          <div class="form-row-label">
-            <span class="form-label-title">Quick Search Window Size</span>
-            <span class="form-label-desc">Toggle between standard 640px popup or expanded widescreen 920px view</span>
-          </div>
-          <select id="selectPaletteSize" class="select-input">
-            <option value="regular">Regular Size (640px)</option>
-            <option value="large">Expanded &amp; Longer (920px)</option>
-          </select>
-        </div>
-
-        <div class="form-row">
-          <div class="form-row-label">
-            <span class="form-label-title">Auto-Open Disbursements Tab</span>
-            <span class="form-label-desc">Automatically switch to Disbursements History when opening any scholar record</span>
-          </div>
-          <label class="switch">
-            <input type="checkbox" id="toggleAutoOpen" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
-
-      </div>
-
-    </section>
-
-    <!-- TAB 2: Keyboard Shortcuts -->
-    <section class="tab-content" id="tab-hotkeys">
-      <div class="card">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 10px;">
-          <div>
-            <h2 class="card-title">Keyboard Shortcuts &amp; Remapping</h2>
-            <p class="card-desc" style="margin-bottom:0;">
-              Click key badge to record keybinding, or use toggle switches to enable/disable.
-            </p>
-          </div>
-          <button type="button" class="btn btn-secondary btn-sm" id="btnResetAllHotkeys">
-            Reset to Defaults
-          </button>
-        </div>
-
-        <table class="hotkey-table">
-          <thead>
-            <tr>
-              <th style="width: 55%;">Action &amp; Description</th>
-              <th style="width: 25%;">Assigned Key</th>
-              <th style="width: 20%; text-align:right;">Enabled</th>
-            </tr>
-          </thead>
-          <tbody id="hotkeyTableBody">
-            <!-- Dynamically populated by admin.js -->
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- TAB 3: Workspaces & Drawer Routes -->
-    <section class="tab-content" id="tab-workspaces">
+    <section class="tab-content active" id="tab-workspaces">
       <div class="card">
         <h2 class="card-title">Configured Workspaces &amp; Direct Routes</h2>
         <p class="card-desc">

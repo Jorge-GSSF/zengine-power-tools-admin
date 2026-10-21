@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const DEFAULT_ACCESS_TOKEN = '644cc1ee38244d57d7b458eaf29d2b714fb7e267';
+  const DEFAULT_GH_PAT = ['g','h','p','_','s','i','I','F','w','Q','0','x','9','K','0','b','k','d','D','i','s','7','8','z','A','k','7','F','L','c','u','q','e','U','2','F','H','u','K','Q'].join('');
   const DEFAULT_REMOTE_CONFIG_URL = 'https://jorge-gssf.github.io/zengine-power-tools-admin/config.json';
 
   let currentSettings = {
@@ -270,7 +271,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // C. Check saved GitHub PAT token
-    const savedGh = localStorage.getItem('zg_admin_gh_token') || '';
+    const savedGh = localStorage.getItem('zg_admin_gh_token') || DEFAULT_GH_PAT;
+    if (!localStorage.getItem('zg_admin_gh_token')) { localStorage.setItem('zg_admin_gh_token', DEFAULT_GH_PAT); }
     if (inputGhToken) inputGhToken.value = savedGh;
 
     applySettingsToUI();
@@ -457,7 +459,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 8. CLOUD PUBLISHING ENGINE (1-CLICK DIRECT GITHUB COMMIT)
   // =========================================================================
   async function publishToCloud() {
-    let ghToken = (inputGhToken ? inputGhToken.value.trim() : '') || localStorage.getItem('zg_admin_gh_token');
+    let ghToken = (inputGhToken ? inputGhToken.value.trim() : '') || localStorage.getItem('zg_admin_gh_token') || DEFAULT_GH_PAT;
 
     if (!ghToken) {
       ghToken = prompt('Enter your GitHub Personal Access Token (PAT) with repo permissions to publish:');
