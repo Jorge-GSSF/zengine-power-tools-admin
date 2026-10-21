@@ -21,8 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     focusSearch:    { id: 'focusSearch', label: 'Focus Table Search', desc: 'Open and focus table search bar', enabled: true, key: '/', display: '/' },
     addNewRecord:   { id: 'addNewRecord', label: 'Add New Record', desc: 'Trigger "+ Add Record" button', enabled: true, key: 'alt+n', display: 'Alt + N' },
     refreshData:    { id: 'refreshData', label: 'Refresh Table Data', desc: 'Reload current table data without page refresh', enabled: true, key: 'alt+r', display: 'Alt + R' },
-    toggleFilters:  { id: 'toggleFilters', label: 'Toggle Table Filters', desc: 'Open/close Form Tools filter sidebar', enabled: true, key: 'alt+f', display: 'Alt + F' },
-    quickSave:      { id: 'quickSave', label: 'Quick Save Record', desc: 'Trigger save on current form', enabled: true, key: 'ctrl+s', display: 'Ctrl + S' }
+    toggleFilters:  { id: 'toggleFilters', label: 'Toggle Table Filters', desc: 'Open/close Form Tools filter sidebar', enabled: true, key: 'alt+f', display: 'Alt + F' }
   };
 
   const DEFAULT_ACCESS_TOKEN = '644cc1ee38244d57d7b458eaf29d2b714fb7e267';

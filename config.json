@@ -116,17 +116,9 @@
       "enabled": true,
       "key": "alt+f",
       "display": "Alt + F"
-    },
-    "quickSave": {
-      "id": "quickSave",
-      "label": "Quick Save Record",
-      "desc": "Trigger save on current form",
-      "enabled": true,
-      "key": "ctrl+s",
-      "display": "Ctrl + S"
     }
   },
   "announcement": "",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "updatedAt": "2026-10-21T14:30:00.000Z"
 }
