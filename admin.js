@@ -20,8 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
     copyId:         { id: 'copyId', label: 'Copy Record ID Only', desc: 'Copy clean numeric ID to clipboard', enabled: true, key: 'alt+i', display: 'Alt + I' },
     focusSearch:    { id: 'focusSearch', label: 'Focus Table Search', desc: 'Open and focus table search bar', enabled: true, key: '/', display: '/' },
     addNewRecord:   { id: 'addNewRecord', label: 'Add New Record', desc: 'Trigger "+ Add Record" button', enabled: true, key: 'alt+n', display: 'Alt + N' },
+    bulkEdit:       { id: 'bulkEdit', label: 'Bulk Actions', desc: 'Open Bulk Actions for current form', enabled: true, key: 'shift+e', display: 'Shift + E' },
     refreshData:    { id: 'refreshData', label: 'Refresh Table Data', desc: 'Reload current table data without page refresh', enabled: true, key: 'alt+r', display: 'Alt + R' },
-    toggleFilters:  { id: 'toggleFilters', label: 'Toggle Table Filters', desc: 'Open/close Form Tools filter sidebar', enabled: true, key: 'alt+f', display: 'Alt + F' }
+    toggleFilters:  { id: 'toggleFilters', label: 'Toggle Table Filters', desc: 'Open/close Form Tools filter sidebar or Bulk Edit custom filter', enabled: true, key: 'shift+f', display: 'Shift + F' }
   };
 
   const DEFAULT_ACCESS_TOKEN = '644cc1ee38244d57d7b458eaf29d2b714fb7e267';
@@ -36,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     defaultWorkspaceId: '34919',
     shortcuts: JSON.parse(JSON.stringify(DEFAULT_SHORTCUTS)),
     announcement: '',
-    version: '1.6.9',
+    version: '1.7.5',
     remoteConfigUrl: DEFAULT_REMOTE_CONFIG_URL
   };
 
@@ -301,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (versionPill) {
       const currentAppVersion = (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getManifest)
         ? chrome.runtime.getManifest().version
-        : '1.6.9';
+        : '1.7.5';
       versionPill.textContent = 'v' + (currentSettings.version || currentAppVersion);
     }
 
@@ -493,7 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
       defaultWorkspaceId: currentSettings.defaultWorkspaceId || '34919',
       shortcuts: currentSettings.shortcuts,
       announcement: (inputAnnouncement ? inputAnnouncement.value.trim() : '') || currentSettings.announcement || '',
-      version: currentSettings.version || ((typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getManifest) ? chrome.runtime.getManifest().version : '1.6.9'),
+      version: currentSettings.version || ((typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getManifest) ? chrome.runtime.getManifest().version : '1.7.5'),
       updatedAt: new Date().toISOString()
     };
 

@@ -120,13 +120,13 @@
     "toggleFilters": {
       "id": "toggleFilters",
       "label": "Toggle Table Filters",
-      "desc": "Open/close Form Tools filter sidebar",
+      "desc": "Open/close Form Tools filter sidebar or Bulk Edit custom filter",
       "enabled": true,
-      "key": "alt+f",
-      "display": "Alt + F"
+      "key": "shift+f",
+      "display": "Shift + F"
     }
   },
   "announcement": "Test",
-  "version": "1.7.4",
+  "version": "1.7.5",
   "updatedAt": "2026-10-22T15:15:00.000Z"
 }
