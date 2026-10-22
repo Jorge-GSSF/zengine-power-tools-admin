@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     defaultWorkspaceId: '34919',
     shortcuts: JSON.parse(JSON.stringify(DEFAULT_SHORTCUTS)),
     announcement: '',
+    version: '1.6.6',
     remoteConfigUrl: DEFAULT_REMOTE_CONFIG_URL
   };
 
@@ -295,6 +296,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Announcement
     if (inputAnnouncement) inputAnnouncement.value = currentSettings.announcement || '';
 
+    // Version pill
+    const versionPill = document.querySelector('.version-pill');
+    if (versionPill) {
+      const currentAppVersion = (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getManifest)
+        ? chrome.runtime.getManifest().version
+        : '1.6.6';
+      versionPill.textContent = 'v' + (currentSettings.version || currentAppVersion);
+    }
+
     // Hotkey table
     renderHotkeyTable();
   }
@@ -483,7 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
       defaultWorkspaceId: currentSettings.defaultWorkspaceId || '34919',
       shortcuts: currentSettings.shortcuts,
       announcement: (inputAnnouncement ? inputAnnouncement.value.trim() : '') || currentSettings.announcement || '',
-      version: '1.4.5',
+      version: currentSettings.version || ((typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getManifest) ? chrome.runtime.getManifest().version : '1.6.6'),
       updatedAt: new Date().toISOString()
     };
 
