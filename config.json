@@ -109,13 +109,13 @@
       "key": "alt+r",
       "display": "Alt + R"
     },
-        "bulkEdit": {
+    "bulkEdit": {
       "id": "bulkEdit",
-      "label": "Open Bulk Edit",
+      "label": "Bulk Actions",
       "desc": "Open Bulk Actions plugin for current form",
       "enabled": true,
-      "key": "fn+e",
-      "display": "Fn + E"
+      "key": "shift+e",
+      "display": "Shift + E"
     },
     "toggleFilters": {
       "id": "toggleFilters",
@@ -127,6 +127,6 @@
     }
   },
   "announcement": "Test",
-  "version": "1.7.3",
+  "version": "1.7.4",
   "updatedAt": "2026-10-22T15:15:00.000Z"
 }
