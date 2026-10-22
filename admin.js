@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     defaultWorkspaceId: '34919',
     shortcuts: JSON.parse(JSON.stringify(DEFAULT_SHORTCUTS)),
     announcement: '',
-    version: '1.7.5',
+    version: '1.7.6',
     remoteConfigUrl: DEFAULT_REMOTE_CONFIG_URL
   };
 
@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (versionPill) {
       const currentAppVersion = (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getManifest)
         ? chrome.runtime.getManifest().version
-        : '1.7.5';
+        : '1.7.6';
       versionPill.textContent = 'v' + (currentSettings.version || currentAppVersion);
     }
 
@@ -494,7 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
       defaultWorkspaceId: currentSettings.defaultWorkspaceId || '34919',
       shortcuts: currentSettings.shortcuts,
       announcement: (inputAnnouncement ? inputAnnouncement.value.trim() : '') || currentSettings.announcement || '',
-      version: currentSettings.version || ((typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getManifest) ? chrome.runtime.getManifest().version : '1.7.5'),
+      version: currentSettings.version || ((typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getManifest) ? chrome.runtime.getManifest().version : '1.7.6'),
       updatedAt: new Date().toISOString()
     };
 
