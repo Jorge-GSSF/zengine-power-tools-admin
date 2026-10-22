@@ -109,6 +109,14 @@
       "key": "alt+r",
       "display": "Alt + R"
     },
+        "bulkEdit": {
+      "id": "bulkEdit",
+      "label": "Open Bulk Edit",
+      "desc": "Open Bulk Actions plugin for current form",
+      "enabled": true,
+      "key": "alt+e",
+      "display": "Alt + E"
+    },
     "toggleFilters": {
       "id": "toggleFilters",
       "label": "Toggle Table Filters",
@@ -119,6 +127,6 @@
     }
   },
   "announcement": "Test",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "updatedAt": "2026-10-22T15:15:00.000Z"
 }
