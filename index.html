@@ -75,7 +75,7 @@
         <div class="brand-text">
           <h1>
             Zengine Power-Tools Admin
-            <span class="version-pill" id="versionPill">v1.8.28</span>
+            <span class="version-pill" id="versionPill">v1.8.29</span>
           </h1>
           <p>George Snow Scholarship Fund • Central Management</p>
         </div>
@@ -226,6 +226,18 @@
         <p class="card-desc">
           Configure global features and policies enforced across all extension installations worldwide.
         </p>
+
+        <!-- Strict Workspace Enforcement Toggle -->
+        <div class="form-row">
+          <div class="form-row-label">
+            <span class="form-label-title">Strict Workspace Enforcement</span>
+            <span class="form-label-desc">Strictly lock the extension to authorized workspaces (34919 Disbursements &amp; 40800 Testing). When active, the extension and all hotkeys do nothing inside unauthorized workspaces.</span>
+          </div>
+          <label class="switch" aria-label="Toggle Strict Workspace Enforcement">
+            <input type="checkbox" id="toggleStrictWorkspace" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
 
         <!-- Hide Dark Mode Globally (Kill Switch) -->
         <div class="form-row">

@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const DEFAULT_REMOTE_CONFIG_URL = 'https://jorge-gssf.github.io/zengine-power-tools-admin/config.json';
 
   let currentSettings = {
+    strictWorkspaceEnforcement: true,
     hideDarkMode: false,
     darkModeFeatureEnabled: true,
     autoOpenEnabled: true,
@@ -40,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     defaultWorkspaceId: '34919',
     shortcuts: JSON.parse(JSON.stringify(DEFAULT_SHORTCUTS)),
     announcement: '',
-    version: '1.8.28',
+    version: '1.8.29',
     remoteConfigUrl: DEFAULT_REMOTE_CONFIG_URL
   };
 
@@ -65,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const tabContents = document.querySelectorAll('.tab-content');
   const iconStyleCards = document.querySelectorAll('.icon-style-card');
   const selectPaletteSize = document.getElementById('selectPaletteSize');
+  const toggleStrictWorkspace = document.getElementById('toggleStrictWorkspace');
   const toggleHideDarkMode = document.getElementById('toggleHideDarkMode');
   const toggleAutoOpen = document.getElementById('toggleAutoOpen');
   const toggleFallbackApiToken = document.getElementById('toggleFallbackApiToken');
@@ -308,6 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (selectPaletteSize) selectPaletteSize.value = currentSettings.paletteSize || 'regular';
 
     // Global Feature Policies
+    if (toggleStrictWorkspace) toggleStrictWorkspace.checked = currentSettings.strictWorkspaceEnforcement !== false;
     if (toggleHideDarkMode) toggleHideDarkMode.checked = currentSettings.hideDarkMode === true || currentSettings.darkModeFeatureEnabled === false;
     if (toggleAutoOpen) toggleAutoOpen.checked = currentSettings.autoOpenEnabled !== false;
     if (toggleFallbackApiToken) toggleFallbackApiToken.checked = currentSettings.fallbackApiTokenEnabled !== false;
@@ -357,6 +360,14 @@ document.addEventListener('DOMContentLoaded', () => {
       currentSettings.paletteSize = selectPaletteSize.value;
       saveLocalSettings({ paletteSize: selectPaletteSize.value });
       showToast(`Quick Search size set to ${selectPaletteSize.value === 'large' ? 'Expanded (920px)' : 'Regular (640px)'}`);
+    });
+  }
+
+  if (toggleStrictWorkspace) {
+    toggleStrictWorkspace.addEventListener('change', () => {
+      currentSettings.strictWorkspaceEnforcement = toggleStrictWorkspace.checked;
+      saveLocalSettings({ strictWorkspaceEnforcement: toggleStrictWorkspace.checked });
+      showToast(`Strict Workspace Enforcement ${toggleStrictWorkspace.checked ? 'Enabled' : 'Disabled'}`);
     });
   }
 
@@ -529,6 +540,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const payloadConfig = {
+      strictWorkspaceEnforcement: currentSettings.strictWorkspaceEnforcement !== false,
       iconStyle: currentSettings.iconStyle,
       paletteSize: currentSettings.paletteSize,
       autoOpenEnabled: currentSettings.autoOpenEnabled,
@@ -545,7 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return sc;
       })(),
       announcement: (inputAnnouncement ? inputAnnouncement.value.trim() : '') || currentSettings.announcement || '',
-      version: '1.8.28',
+      version: '1.8.29',
       updatedAt: new Date().toISOString()
     };
 

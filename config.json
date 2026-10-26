@@ -127,9 +127,10 @@
     }
   },
   "announcement": "Test",
-  "version": "1.8.28",
-  "updatedAt": "2026-10-26T16:48:00.000Z",
+  "version": "1.8.29",
+  "updatedAt": "2026-10-26T21:08:09.021Z",
   "fallbackApiTokenEnabled": true,
   "hideDarkMode": false,
-  "darkModeFeatureEnabled": true
+  "darkModeFeatureEnabled": true,
+  "strictWorkspaceEnforcement": true
 }
