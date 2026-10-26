@@ -8,20 +8,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 1. DEFAULT VALUES
   const DEFAULT_SHORTCUTS = {
-    commandPalette: { id: 'commandPalette', label: 'Command Palette', desc: 'Live search students, awards & disbursements', enabled: true, key: 'ctrl+k', display: 'Ctrl + K' },
+    commandPalette: { id: 'commandPalette', label: 'Quick Search', desc: 'Live search students, awards & disbursements', enabled: true, key: 'ctrl+k', display: 'Ctrl + K' },
     navDown:        { id: 'navDown', label: 'Next Record', desc: 'Move to next record (table or drawer)', enabled: true, key: 'j', display: 'J' },
     navUp:          { id: 'navUp', label: 'Previous Record', desc: 'Move to previous record (table or drawer)', enabled: true, key: 'k', display: 'K' },
     openRecord:     { id: 'openRecord', label: 'Open Selected Record', desc: 'Open side panel for highlighted row', enabled: true, key: 'enter', display: 'Enter' },
     closePanel:     { id: 'closePanel', label: 'Close Panel / Escape', desc: 'Dismiss side panel or modal', enabled: true, key: 'escape', display: 'Esc' },
     cycleTabNext:   { id: 'cycleTabNext', label: 'Next Side Tab', desc: 'Cycle forward through side panel tabs', enabled: true, key: ']', display: ']' },
     cycleTabPrev:   { id: 'cycleTabPrev', label: 'Previous Side Tab', desc: 'Cycle backward through side panel tabs', enabled: true, key: '[', display: '[' },
-    copyLink:       { id: 'copyLink', label: 'Copy Clean Record Link', desc: 'Direct URL to current record', enabled: true, key: 'alt+l', display: 'Alt + L' },
+    copyLink:       { id: 'copyLink', label: 'Copy record link', desc: 'Direct URL to current record', enabled: true, key: 'alt+l', display: 'Alt + L' },
     copySummary:    { id: 'copySummary', label: 'Copy Scholar Summary', desc: 'Scholar Name, ID & balance card', enabled: true, key: 'alt+c', display: 'Alt + C' },
     copyId:         { id: 'copyId', label: 'Copy Record ID Only', desc: 'Copy clean numeric ID to clipboard', enabled: true, key: 'alt+i', display: 'Alt + I' },
     focusSearch:    { id: 'focusSearch', label: 'Focus Table Search', desc: 'Open and focus table search bar', enabled: true, key: '/', display: '/' },
     addNewRecord:   { id: 'addNewRecord', label: 'Add New Record', desc: 'Trigger "+ Add Record" button', enabled: true, key: 'alt+n', display: 'Alt + N' },
     bulkEdit:       { id: 'bulkEdit', label: 'Bulk Actions', desc: 'Open Bulk Actions for current form', enabled: true, key: 'shift+e', display: 'Shift + E' },
-    refreshData:    { id: 'refreshData', label: 'Refresh Table Data', desc: 'Reload current table data without page refresh', enabled: true, key: 'alt+r', display: 'Alt + R' },
     toggleFilters:  { id: 'toggleFilters', label: 'Toggle Table Filters', desc: 'Open/close Form Tools filter sidebar or Bulk Edit custom filter', enabled: true, key: '=', display: '=' },
     toggleDarkMode: { id: 'toggleDarkMode', label: 'Toggle Dark Mode', desc: 'Toggle Dark / Light theme', enabled: true, key: 'ctrl+q', display: 'Ctrl + Q' }
   };
@@ -41,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     defaultWorkspaceId: '34919',
     shortcuts: JSON.parse(JSON.stringify(DEFAULT_SHORTCUTS)),
     announcement: '',
-    version: '1.8.27',
+    version: '1.8.28',
     remoteConfigUrl: DEFAULT_REMOTE_CONFIG_URL
   };
 
@@ -289,6 +288,13 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
+    // Normalize shortcuts: remove removed refreshData and update labels
+    if (currentSettings.shortcuts) {
+      delete currentSettings.shortcuts.refreshData;
+      if (currentSettings.shortcuts.commandPalette) currentSettings.shortcuts.commandPalette.label = 'Quick Search';
+      if (currentSettings.shortcuts.copyLink) currentSettings.shortcuts.copyLink.label = 'Copy record link';
+    }
+
     applySettingsToUI();
   }
 
@@ -350,7 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
     selectPaletteSize.addEventListener('change', () => {
       currentSettings.paletteSize = selectPaletteSize.value;
       saveLocalSettings({ paletteSize: selectPaletteSize.value });
-      showToast(`Command Palette size set to ${selectPaletteSize.value === 'large' ? 'Expanded (920px)' : 'Regular (640px)'}`);
+      showToast(`Quick Search size set to ${selectPaletteSize.value === 'large' ? 'Expanded (920px)' : 'Regular (640px)'}`);
     });
   }
 
@@ -531,9 +537,15 @@ document.addEventListener('DOMContentLoaded', () => {
       darkModeFeatureEnabled: !currentSettings.hideDarkMode,
       apiToken: currentSettings.apiToken || DEFAULT_ACCESS_TOKEN,
       defaultWorkspaceId: currentSettings.defaultWorkspaceId || '34919',
-      shortcuts: currentSettings.shortcuts,
+      shortcuts: (() => {
+        const sc = { ...currentSettings.shortcuts };
+        delete sc.refreshData;
+        if (sc.commandPalette) sc.commandPalette.label = 'Quick Search';
+        if (sc.copyLink) sc.copyLink.label = 'Copy record link';
+        return sc;
+      })(),
       announcement: (inputAnnouncement ? inputAnnouncement.value.trim() : '') || currentSettings.announcement || '',
-      version: '1.8.27',
+      version: '1.8.28',
       updatedAt: new Date().toISOString()
     };
 

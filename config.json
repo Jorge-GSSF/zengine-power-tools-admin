@@ -7,7 +7,7 @@
   "shortcuts": {
     "commandPalette": {
       "id": "commandPalette",
-      "label": "Command Palette",
+      "label": "Quick Search",
       "desc": "Live search students, awards & disbursements",
       "enabled": true,
       "key": "ctrl+k",
@@ -63,7 +63,7 @@
     },
     "copyLink": {
       "id": "copyLink",
-      "label": "Copy Clean Record Link",
+      "label": "Copy record link",
       "desc": "Direct URL to current record",
       "enabled": true,
       "key": "alt+l",
@@ -101,14 +101,6 @@
       "key": "alt+n",
       "display": "Alt + N"
     },
-    "refreshData": {
-      "id": "refreshData",
-      "label": "Refresh Table Data",
-      "desc": "Reload current table data without page refresh",
-      "enabled": true,
-      "key": "alt+r",
-      "display": "Alt + R"
-    },
     "bulkEdit": {
       "id": "bulkEdit",
       "label": "Bulk Actions",
@@ -135,8 +127,8 @@
     }
   },
   "announcement": "Test",
-  "version": "1.8.27",
-  "updatedAt": "2026-10-26T16:41:00.000Z",
+  "version": "1.8.28",
+  "updatedAt": "2026-10-26T16:48:00.000Z",
   "fallbackApiTokenEnabled": true,
   "hideDarkMode": false,
   "darkModeFeatureEnabled": true
