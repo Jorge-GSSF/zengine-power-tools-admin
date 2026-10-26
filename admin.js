@@ -22,22 +22,24 @@ document.addEventListener('DOMContentLoaded', () => {
     addNewRecord:   { id: 'addNewRecord', label: 'Add New Record', desc: 'Trigger "+ Add Record" button', enabled: true, key: 'alt+n', display: 'Alt + N' },
     bulkEdit:       { id: 'bulkEdit', label: 'Bulk Actions', desc: 'Open Bulk Actions for current form', enabled: true, key: 'shift+e', display: 'Shift + E' },
     refreshData:    { id: 'refreshData', label: 'Refresh Table Data', desc: 'Reload current table data without page refresh', enabled: true, key: 'alt+r', display: 'Alt + R' },
-    toggleFilters:  { id: 'toggleFilters', label: 'Toggle Table Filters', desc: 'Open/close Form Tools filter sidebar or Bulk Edit custom filter', enabled: true, key: 'shift+f', display: 'Shift + F' }
+    toggleFilters:  { id: 'toggleFilters', label: 'Toggle Table Filters', desc: 'Open/close Form Tools filter sidebar or Bulk Edit custom filter', enabled: true, key: '=', display: '=' },
+    toggleDarkMode: { id: 'toggleDarkMode', label: 'Toggle Dark Mode', desc: 'Toggle Dark / Light theme', enabled: true, key: 'ctrl+q', display: 'Ctrl + Q' }
   };
 
-  const DEFAULT_ACCESS_TOKEN = '644cc1ee38244d57d7b458eaf29d2b714fb7e267';
-  const DEFAULT_GH_PAT = ['g','h','p','_','s','i','I','F','w','Q','0','x','9','K','0','b','k','d','D','i','s','7','8','z','A','k','7','F','L','c','u','q','e','U','2','F','H','u','K','Q'].join('');
+  const DEFAULT_ACCESS_TOKEN = '';
+  const DEFAULT_GH_PAT = '';
   const DEFAULT_REMOTE_CONFIG_URL = 'https://jorge-gssf.github.io/zengine-power-tools-admin/config.json';
 
   let currentSettings = {
     autoOpenEnabled: true,
+    fallbackApiTokenEnabled: true,
     paletteSize: 'regular',
     iconStyle: 'modern', // 'modern' | 'none' | 'emoji'
     apiToken: DEFAULT_ACCESS_TOKEN,
     defaultWorkspaceId: '34919',
     shortcuts: JSON.parse(JSON.stringify(DEFAULT_SHORTCUTS)),
     announcement: '',
-    version: '1.7.7',
+    version: '1.8.26',
     remoteConfigUrl: DEFAULT_REMOTE_CONFIG_URL
   };
 
@@ -63,6 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const iconStyleCards = document.querySelectorAll('.icon-style-card');
   const selectPaletteSize = document.getElementById('selectPaletteSize');
   const toggleAutoOpen = document.getElementById('toggleAutoOpen');
+  const toggleFallbackApiToken = document.getElementById('toggleFallbackApiToken');
 
   const hotkeyTableBody = document.getElementById('hotkeyTableBody');
   const btnResetAllHotkeys = document.getElementById('btnResetAllHotkeys');
@@ -272,9 +275,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // C. Check saved GitHub PAT token
-    const savedGh = localStorage.getItem('zg_admin_gh_token') || DEFAULT_GH_PAT;
-    if (!localStorage.getItem('zg_admin_gh_token')) { localStorage.setItem('zg_admin_gh_token', DEFAULT_GH_PAT); }
-    if (inputGhToken) inputGhToken.value = savedGh;
+    const savedGh = localStorage.getItem('zg_admin_gh_token') || '';
+    
+    if (inputGhToken) {
+      inputGhToken.value = savedGh;
+      inputGhToken.addEventListener('input', () => {
+        const v = inputGhToken.value.trim();
+        localStorage.setItem('zg_admin_gh_token', v);
+        try { chrome.storage.local.set({ zg_admin_gh_token: v }); } catch(e) {}
+      });
+    }
 
     applySettingsToUI();
   }
@@ -290,6 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Auto Open
     if (toggleAutoOpen) toggleAutoOpen.checked = currentSettings.autoOpenEnabled !== false;
+    if (toggleFallbackApiToken) toggleFallbackApiToken.checked = currentSettings.fallbackApiTokenEnabled !== false;
 
     // API Token
     if (inputApiToken) inputApiToken.value = currentSettings.apiToken || DEFAULT_ACCESS_TOKEN;
@@ -302,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (versionPill) {
       const currentAppVersion = (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getManifest)
         ? chrome.runtime.getManifest().version
-        : '1.7.7';
+        : '1.8.21';
       versionPill.textContent = 'v' + (currentSettings.version || currentAppVersion);
     }
 
@@ -490,11 +501,12 @@ document.addEventListener('DOMContentLoaded', () => {
       iconStyle: currentSettings.iconStyle,
       paletteSize: currentSettings.paletteSize,
       autoOpenEnabled: currentSettings.autoOpenEnabled,
+      fallbackApiTokenEnabled: currentSettings.fallbackApiTokenEnabled !== false,
       apiToken: currentSettings.apiToken || DEFAULT_ACCESS_TOKEN,
       defaultWorkspaceId: currentSettings.defaultWorkspaceId || '34919',
       shortcuts: currentSettings.shortcuts,
       announcement: (inputAnnouncement ? inputAnnouncement.value.trim() : '') || currentSettings.announcement || '',
-      version: currentSettings.version || ((typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getManifest) ? chrome.runtime.getManifest().version : '1.7.7'),
+      version: currentSettings.version || ((typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getManifest) ? chrome.runtime.getManifest().version : '1.8.21'),
       updatedAt: new Date().toISOString()
     };
 
