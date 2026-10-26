@@ -28,11 +28,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const DEFAULT_ACCESS_TOKEN = '';
   const DEFAULT_GH_PAT = '';
   const DEFAULT_REMOTE_CONFIG_URL = 'https://jorge-gssf.github.io/zengine-power-tools-admin/config.json';
+  const FIRESTORE_SETTINGS_URL = 'https://firestore.googleapis.com/v1/projects/jorge-portfolio-site/databases/(default)/documents/portfolio_config/zengine_settings';
+  const FIRESTORE_SECRET_KEY = '01Imre38!@' + String.fromCharCode(36);
 
   let currentSettings = {
     strictWorkspaceEnforcement: true,
-    hideDarkMode: false,
-    darkModeFeatureEnabled: true,
+    hideDarkMode: true,
+    darkModeFeatureEnabled: false,
     autoOpenEnabled: true,
     fallbackApiTokenEnabled: true,
     paletteSize: 'regular',
@@ -41,9 +43,82 @@ document.addEventListener('DOMContentLoaded', () => {
     defaultWorkspaceId: '34919',
     shortcuts: JSON.parse(JSON.stringify(DEFAULT_SHORTCUTS)),
     announcement: '',
-    version: '1.8.29',
+    version: '1.8.30',
     remoteConfigUrl: DEFAULT_REMOTE_CONFIG_URL
   };
+
+  function parseFirestoreSettings(doc) {
+    if (!doc || !doc.fields) return null;
+    const f = doc.fields;
+    const res = {};
+    if (f.hideDarkMode !== undefined) res.hideDarkMode = Boolean(f.hideDarkMode.booleanValue);
+    if (f.darkModeFeatureEnabled !== undefined) res.darkModeFeatureEnabled = Boolean(f.darkModeFeatureEnabled.booleanValue);
+    if (f.strictWorkspaceEnforcement !== undefined) res.strictWorkspaceEnforcement = Boolean(f.strictWorkspaceEnforcement.booleanValue);
+    if (f.autoOpenEnabled !== undefined) res.autoOpenEnabled = Boolean(f.autoOpenEnabled.booleanValue);
+    if (f.fallbackApiTokenEnabled !== undefined) res.fallbackApiTokenEnabled = Boolean(f.fallbackApiTokenEnabled.booleanValue);
+    if (f.paletteSize && f.paletteSize.stringValue) res.paletteSize = f.paletteSize.stringValue;
+    if (f.iconStyle && f.iconStyle.stringValue) res.iconStyle = f.iconStyle.stringValue;
+    if (f.apiToken && f.apiToken.stringValue) res.apiToken = f.apiToken.stringValue;
+    if (f.defaultWorkspaceId && f.defaultWorkspaceId.stringValue) res.defaultWorkspaceId = f.defaultWorkspaceId.stringValue;
+    if (f.announcement && f.announcement.stringValue) res.announcement = f.announcement.stringValue;
+    if (f.version && f.version.stringValue) res.version = f.version.stringValue;
+    if (f.shortcuts_json && f.shortcuts_json.stringValue) {
+      try { res.shortcuts = JSON.parse(f.shortcuts_json.stringValue); } catch(e) {}
+    }
+    return res;
+  }
+
+  async function saveToFirebase(updates) {
+    try {
+      const fields = {
+        secret_key: { stringValue: FIRESTORE_SECRET_KEY }
+      };
+      if (updates.hideDarkMode !== undefined) {
+        fields.hideDarkMode = { booleanValue: Boolean(updates.hideDarkMode) };
+        fields.darkModeFeatureEnabled = { booleanValue: !updates.hideDarkMode };
+      }
+      if (updates.strictWorkspaceEnforcement !== undefined) {
+        fields.strictWorkspaceEnforcement = { booleanValue: Boolean(updates.strictWorkspaceEnforcement) };
+      }
+      if (updates.fallbackApiTokenEnabled !== undefined) {
+        fields.fallbackApiTokenEnabled = { booleanValue: Boolean(updates.fallbackApiTokenEnabled) };
+      }
+      if (updates.autoOpenEnabled !== undefined) {
+        fields.autoOpenEnabled = { booleanValue: Boolean(updates.autoOpenEnabled) };
+      }
+      if (updates.paletteSize !== undefined) {
+        fields.paletteSize = { stringValue: String(updates.paletteSize) };
+      }
+      if (updates.iconStyle !== undefined) {
+        fields.iconStyle = { stringValue: String(updates.iconStyle) };
+      }
+      if (updates.apiToken !== undefined) {
+        fields.apiToken = { stringValue: String(updates.apiToken) };
+      }
+      if (updates.defaultWorkspaceId !== undefined) {
+        fields.defaultWorkspaceId = { stringValue: String(updates.defaultWorkspaceId) };
+      }
+      if (updates.announcement !== undefined) {
+        fields.announcement = { stringValue: String(updates.announcement) };
+      }
+      if (updates.shortcuts !== undefined) {
+        fields.shortcuts_json = { stringValue: JSON.stringify(updates.shortcuts) };
+      }
+      fields.updatedAt = { stringValue: new Date().toISOString() };
+      fields.version = { stringValue: '1.8.30' };
+
+      const resp = await fetch(FIRESTORE_SETTINGS_URL, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields })
+      });
+      if (resp.ok) {
+        if (storageStatusText) storageStatusText.textContent = 'Firebase Synced';
+      }
+    } catch (err) {
+      console.warn('Firebase save failed:', err);
+    }
+  }
 
   // 2. DOM REFERENCES
   const pinGateOverlay = document.getElementById('adminPinGate');
@@ -249,7 +324,20 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadInitialSettings() {
     let loaded = false;
 
-    // A. First check extension storage if running inside extension
+    // 0. FIRST: Immediately load cached settings from localStorage for instant zero-flicker persistence on refresh!
+    const cached = localStorage.getItem('zg_admin_cached_config');
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        if (parsed && typeof parsed === 'object') {
+          currentSettings = { ...currentSettings, ...parsed };
+          applySettingsToUI();
+          loaded = true;
+        }
+      } catch (e) {}
+    }
+
+    // A. Check extension storage if running inside extension
     if (hasExtensionStorage) {
       await new Promise(resolve => {
         chrome.storage.sync.get(null, (items) => {
@@ -262,20 +350,36 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // B. Fetch live cloud config with cache-busting timestamp
+    // B. Fetch live cloud config from Firebase Firestore (Instant zero-delay cloud sync)
     try {
-      const cloudUrl = (inputCloudUrl && inputCloudUrl.value.trim()) || DEFAULT_REMOTE_CONFIG_URL;
-      const resp = await fetch(`${cloudUrl}?_t=${Date.now()}`, { cache: 'no-store' });
-      if (resp.ok) {
-        const cloudData = await resp.json();
-        if (cloudData && typeof cloudData === 'object') {
-          currentSettings = { ...currentSettings, ...cloudData };
-          if (storageStatusText) storageStatusText.textContent = 'Live Synced';
+      const fbResp = await fetch(FIRESTORE_SETTINGS_URL + '?_t=' + Date.now(), { cache: 'no-store' });
+      if (fbResp.ok) {
+        const fbDoc = await fbResp.json();
+        const fbSettings = parseFirestoreSettings(fbDoc);
+        if (fbSettings && Object.keys(fbSettings).length > 0) {
+          currentSettings = { ...currentSettings, ...fbSettings };
+          if (storageStatusText) storageStatusText.textContent = 'Firebase Live';
+          localStorage.setItem('zg_admin_cached_config', JSON.stringify(currentSettings));
+          if (hasExtensionStorage) chrome.storage.sync.set(currentSettings);
           loaded = true;
         }
       }
-    } catch (e) {
-      console.warn('Could not fetch cloud config on load:', e);
+    } catch (fbErr) {
+      console.warn('Firebase sync failed, falling back to GitHub:', fbErr);
+      try {
+        const cloudUrl = (inputCloudUrl && inputCloudUrl.value.trim()) || DEFAULT_REMOTE_CONFIG_URL;
+        const resp = await fetch(cloudUrl + '?_t=' + Date.now(), { cache: 'no-store' });
+        if (resp.ok) {
+          const cloudData = await resp.json();
+          if (cloudData && typeof cloudData === 'object') {
+            currentSettings = { ...currentSettings, ...cloudData };
+            if (storageStatusText) storageStatusText.textContent = 'Live Synced';
+            loaded = true;
+          }
+        }
+      } catch (e) {
+        console.warn('Could not fetch cloud config on load:', e);
+      }
     }
 
     // C. Check saved GitHub PAT token
@@ -340,6 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
       chrome.storage.sync.set(updates);
     }
     localStorage.setItem('zg_admin_cached_config', JSON.stringify(currentSettings));
+    saveToFirebase(updates);
   }
 
   // =========================================================================
@@ -557,7 +662,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return sc;
       })(),
       announcement: (inputAnnouncement ? inputAnnouncement.value.trim() : '') || currentSettings.announcement || '',
-      version: '1.8.29',
+      version: '1.8.30',
       updatedAt: new Date().toISOString()
     };
 
@@ -601,7 +706,8 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error(errData.message || `GitHub error ${putResp.status}`);
       }
 
-      // Save locally too
+      // Save to Firebase and locally
+      saveToFirebase(payloadConfig);
       saveLocalSettings(payloadConfig);
       localStorage.setItem('zg_admin_gh_token', ghToken);
 

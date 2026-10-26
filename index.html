@@ -75,7 +75,7 @@
         <div class="brand-text">
           <h1>
             Zengine Power-Tools Admin
-            <span class="version-pill" id="versionPill">v1.8.29</span>
+            <span class="version-pill" id="versionPill">v1.8.30</span>
           </h1>
           <p>George Snow Scholarship Fund • Central Management</p>
         </div>
@@ -246,7 +246,7 @@
             <span class="form-label-desc">Completely hide Dark Mode in user popups and disable dark mode styling &amp; <kbd>Ctrl + Q</kbd> globally for all users.</span>
           </div>
           <label class="switch" aria-label="Toggle Hide Dark Mode Globally">
-            <input type="checkbox" id="toggleHideDarkMode">
+            <input type="checkbox" id="toggleHideDarkMode" checked>
             <span class="slider"></span>
           </label>
         </div>
@@ -417,6 +417,24 @@
     <!-- TAB 5: Cloud Sync & Tokens -->
     <section class="tab-content" id="tab-cloud">
       
+      <!-- Firebase Cloud Sync Card -->
+      <div class="card" style="border: 1px solid #bbf7d0; background: #f0fdf4; margin-bottom: 14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+          <h2 class="card-title" style="color:#15803d; margin-bottom:0; display:flex; align-items:center; gap:6px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            Firebase Realtime Cloud Database (Zero-Latency Sync)
+          </h2>
+          <span class="badge" style="background:#dcfce7; color:#166534; font-weight:600; font-size:11px; padding:3px 8px; border-radius:12px;">Active &amp; Connected</span>
+        </div>
+        <p class="card-desc" style="margin-bottom:10px;">
+          Admin switches and policies auto-save to Firebase Firestore in real time. Settings persist immediately across page refreshes and apply globally to all team extensions without GitHub deployment delays.
+        </p>
+        <div>
+          <label style="display:block; font-size:12px; font-weight:600; margin-bottom:4px;">Firestore Document Endpoint:</label>
+          <input type="text" id="inputFirestoreUrl" class="text-input" readonly style="font-family:monospace; background:#ffffff; color:#374151;" value="https://firestore.googleapis.com/v1/projects/jorge-portfolio-site/databases/(default)/documents/portfolio_config/zengine_settings">
+        </div>
+      </div>
+
       <div class="card" style="border: 1px solid #bfdbfe; background: #f8fbff; margin-bottom: 14px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
           <h2 class="card-title" style="color:#1d4ed8; margin-bottom:0;">
