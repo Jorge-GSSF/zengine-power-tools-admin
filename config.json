@@ -124,10 +124,20 @@
       "enabled": true,
       "key": "=",
       "display": "="
+    },
+    "toggleDarkMode": {
+      "id": "toggleDarkMode",
+      "label": "Toggle Dark Mode",
+      "desc": "Toggle Dark / Light theme",
+      "enabled": true,
+      "key": "ctrl+q",
+      "display": "Ctrl + Q"
     }
   },
   "announcement": "Test",
-  "version": "1.8.26",
-  "updatedAt": "2026-10-23T03:25:00.000Z",
-  "fallbackApiTokenEnabled": true
+  "version": "1.8.27",
+  "updatedAt": "2026-10-26T16:41:00.000Z",
+  "fallbackApiTokenEnabled": true,
+  "hideDarkMode": false,
+  "darkModeFeatureEnabled": true
 }

@@ -75,7 +75,7 @@
         <div class="brand-text">
           <h1>
             Zengine Power-Tools Admin
-            <span class="version-pill" id="versionPill">v1.8.26</span>
+            <span class="version-pill" id="versionPill">v1.8.27</span>
           </h1>
           <p>George Snow Scholarship Fund • Central Management</p>
         </div>
@@ -118,6 +118,28 @@
         <span>Workspaces &amp; Routes</span>
       </button>
 
+      <button type="button" class="admin-nav-tab" data-tab="features">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        <span>Global Policies &amp; Features</span>
+      </button>
+
+      <button type="button" class="admin-nav-tab" data-tab="hotkeys">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+          <line x1="6" y1="8" x2="6" y2="8"></line>
+          <line x1="10" y1="8" x2="10" y2="8"></line>
+          <line x1="14" y1="8" x2="14" y2="8"></line>
+          <line x1="18" y1="8" x2="18" y2="8"></line>
+          <line x1="6" y1="12" x2="6" y2="12"></line>
+          <line x1="18" y1="12" x2="18" y2="12"></line>
+          <line x1="8" y1="16" x2="16" y2="16"></line>
+        </svg>
+        <span>Keyboard Shortcuts</span>
+      </button>
+
       <button type="button" class="admin-nav-tab" data-tab="api">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -134,7 +156,7 @@
       </button>
     </nav>
 
-    <!-- TAB 1: Search Aesthetics & Icons -->
+    <!-- TAB 1: Workspaces & Direct Routes -->
     <section class="tab-content active" id="tab-workspaces">
       <div class="card">
         <h2 class="card-title">Configured Workspaces &amp; Direct Routes</h2>
@@ -194,6 +216,168 @@
 
         </div>
 
+      </div>
+    </section>
+
+    <!-- TAB 2: Global Policies & Features -->
+    <section class="tab-content" id="tab-features">
+      <div class="card" style="margin-bottom: 14px;">
+        <h2 class="card-title">Enterprise Global Feature Policies</h2>
+        <p class="card-desc">
+          Configure global features and policies enforced across all extension installations worldwide.
+        </p>
+
+        <!-- Hide Dark Mode Globally (Kill Switch) -->
+        <div class="form-row">
+          <div class="form-row-label">
+            <span class="form-label-title">Hide Dark Mode (Global Kill Switch)</span>
+            <span class="form-label-desc">Completely hide Dark Mode in user popups and disable dark mode styling &amp; <kbd>Ctrl + Q</kbd> globally for all users.</span>
+          </div>
+          <label class="switch" aria-label="Toggle Hide Dark Mode Globally">
+            <input type="checkbox" id="toggleHideDarkMode">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- Fallback API Token Toggle -->
+        <div class="form-row">
+          <div class="form-row-label">
+            <span class="form-label-title">Enable Fallback API Token</span>
+            <span class="form-label-desc">Allow extension to use central static API token if real-time session sniffing does not capture active user token.</span>
+          </div>
+          <label class="switch" aria-label="Toggle Fallback API Token">
+            <input type="checkbox" id="toggleFallbackApiToken" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- Auto Open Disbursements Tab Toggle -->
+        <div class="form-row">
+          <div class="form-row-label">
+            <span class="form-label-title">Auto-Open Disbursements Tab (Default)</span>
+            <span class="form-label-desc">Global default for automatically switching to Disbursements History when a student record panel opens.</span>
+          </div>
+          <label class="switch" aria-label="Toggle Auto-Open Disbursements Tab">
+            <input type="checkbox" id="toggleAutoOpen" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- Live Search Window Size -->
+        <div class="form-row">
+          <div class="form-row-label">
+            <span class="form-label-title">Live Search Window Size</span>
+            <span class="form-label-desc">Default window width for the Spotlight search window (<kbd>Ctrl + K</kbd>).</span>
+          </div>
+          <select id="selectPaletteSize" class="select-input">
+            <option value="regular" selected>Regular (640px)</option>
+            <option value="large">Expanded &amp; Longer (920px)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Quick Search Icon Design System -->
+      <div class="card">
+        <h2 class="card-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
+          Quick Search Icon Design System
+        </h2>
+        <p class="card-desc">
+          Select visual presentation for Spotlight Command Palette (<kbd>Ctrl + K</kbd>). Users can optionally select their own preference locally.
+        </p>
+
+        <div class="icon-styles-grid">
+          
+          <!-- Option A: Modern Minimalist (Vector Outlines) -->
+          <div class="icon-style-card selected" data-style="modern">
+            <div class="icon-card-header">
+              <span class="icon-radio-circle"></span>
+              <h3>Modern Minimalist</h3>
+              <span class="badge-recommended">Recommended</span>
+            </div>
+            <div class="icon-preview-row">
+              <span class="icon-sample" title="Scholar">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+              </span>
+              <span class="icon-sample" title="Disbursement">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
+              </span>
+              <span class="icon-sample" title="Award">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path></svg>
+              </span>
+              <span class="icon-sample" title="Payee">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="18" x="4" y="3" rx="2"></rect><line x1="8" y1="7" x2="8" y2="7"></line><line x1="16" y1="7" x2="16" y2="7"></line></svg>
+              </span>
+            </div>
+            <p class="icon-style-desc">
+              Clean monochrome SVG vector outlines. Replaces emojis with crisp typography badges.
+            </p>
+          </div>
+
+          <!-- Option B: Text-Only (Hide Icons) -->
+          <div class="icon-style-card" data-style="none">
+            <div class="icon-card-header">
+              <span class="icon-radio-circle"></span>
+              <h3>Text-Only (No Icons)</h3>
+            </div>
+            <div class="icon-preview-row">
+              <span class="text-sample">STUDENTS</span>
+              <span class="text-sample">AWARDS</span>
+              <span class="text-sample">PAYEES</span>
+            </div>
+            <p class="icon-style-desc">
+              Maximum screen economy. Hides icons and displays compact all-caps uppercase category labels.
+            </p>
+          </div>
+
+          <!-- Option C: Classic Emojis -->
+          <div class="icon-style-card" data-style="emoji">
+            <div class="icon-card-header">
+              <span class="icon-radio-circle"></span>
+              <h3>Classic Emojis</h3>
+            </div>
+            <div class="icon-preview-row">
+              <span class="icon-sample" style="border:none; background:transparent; font-size:14px;">🎓</span>
+              <span class="icon-sample" style="border:none; background:transparent; font-size:14px;">💳</span>
+              <span class="icon-sample" style="border:none; background:transparent; font-size:14px;">🏆</span>
+              <span class="icon-sample" style="border:none; background:transparent; font-size:14px;">🏢</span>
+            </div>
+            <p class="icon-style-desc">
+              Original playful aesthetic with vibrant high-contrast OS native emojis.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: Keyboard Shortcuts -->
+    <section class="tab-content" id="tab-hotkeys">
+      <div class="card">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 10px;">
+          <div>
+            <h2 class="card-title">Keyboard Shortcuts &amp; Remapping</h2>
+            <p class="card-desc" style="margin-bottom:0;">
+              Click key badge to record keybinding, or use toggle switches to enable/disable. Global defaults for all users.
+            </p>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" id="btnResetAllHotkeys">
+            Reset to Defaults
+          </button>
+        </div>
+
+        <table class="hotkey-table">
+          <thead>
+            <tr>
+              <th style="width: 55%;">Action &amp; Description</th>
+              <th style="width: 25%;">Assigned Key</th>
+              <th style="width: 20%; text-align:right;">Enabled</th>
+            </tr>
+          </thead>
+          <tbody id="hotkeyTableBody">
+            <!-- Dynamically populated by admin.js -->
+          </tbody>
+        </table>
       </div>
     </section>
 
