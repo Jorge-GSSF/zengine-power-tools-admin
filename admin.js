@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     defaultWorkspaceId: '34919',
     shortcuts: JSON.parse(JSON.stringify(DEFAULT_SHORTCUTS)),
     announcement: '',
-    version: '1.8.30',
+    version: '1.8.31',
     remoteConfigUrl: DEFAULT_REMOTE_CONFIG_URL
   };
 
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fields.shortcuts_json = { stringValue: JSON.stringify(updates.shortcuts) };
       }
       fields.updatedAt = { stringValue: new Date().toISOString() };
-      fields.version = { stringValue: '1.8.30' };
+      fields.version = { stringValue: '1.8.31' };
 
       const resp = await fetch(FIRESTORE_SETTINGS_URL, {
         method: 'PATCH',
@@ -662,7 +662,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return sc;
       })(),
       announcement: (inputAnnouncement ? inputAnnouncement.value.trim() : '') || currentSettings.announcement || '',
-      version: '1.8.30',
+      version: '1.8.31',
       updatedAt: new Date().toISOString()
     };
 
