@@ -121,6 +121,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 2. DOM REFERENCES
+  const pinForm = document.getElementById('pinForm');
+  if (pinForm) pinForm.addEventListener('submit', (e) => e.preventDefault());
+
   const pinGateOverlay = document.getElementById('adminPinGate');
   const pinCard = document.querySelector('.pin-gate-card');
   const pinHiddenInput = document.getElementById('pinHiddenInput');
