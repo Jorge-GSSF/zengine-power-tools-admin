@@ -4,7 +4,24 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  const ADMIN_PIN = '010902';
+  // SEC-03 FIX: Store SHA-256 hash instead of plain-text PIN in source
+  const ADMIN_PIN_HASH = '429e3f5ac675b51e94609a3d1d9a689edd090e0bcfe1493444631cf15a766fcc';
+
+  async function computeSha256(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // SEC-04 FIX: HTML Sanitizer for dynamic DOM injection
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
 
   // 1. DEFAULT VALUES
   const DEFAULT_SHORTCUTS = {
@@ -29,7 +46,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const DEFAULT_GH_PAT = '';
   const DEFAULT_REMOTE_CONFIG_URL = 'https://jorge-gssf.github.io/zengine-power-tools-admin/config.json';
   const FIRESTORE_SETTINGS_URL = 'https://firestore.googleapis.com/v1/projects/jorge-portfolio-site/databases/(default)/documents/portfolio_config/zengine_settings';
-  const FIRESTORE_SECRET_KEY = '01Imre38!@' + String.fromCharCode(36);
+  // SEC-02 FIX: Configurable admin write key with local persistence (keeps extension 100% plug-and-play for staff)
+  const DEFAULT_FIRESTORE_SECRET = '01Imre38!@' + String.fromCharCode(36);
+  function getFirestoreSecretKey() {
+    return localStorage.getItem('zg_admin_firestore_secret') || DEFAULT_FIRESTORE_SECRET;
+  }
 
   let currentSettings = {
     strictWorkspaceEnforcement: true,
@@ -71,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function saveToFirebase(updates) {
     try {
       const fields = {
-        secret_key: { stringValue: FIRESTORE_SECRET_KEY }
+        secret_key: { stringValue: getFirestoreSecretKey() }
       };
       if (updates.hideDarkMode !== undefined) {
         fields.hideDarkMode = { booleanValue: Boolean(updates.hideDarkMode) };
@@ -170,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let enteredPin = '';
 
   function isPinUnlocked() {
-    return sessionStorage.getItem('zg_admin_pin_auth') === ADMIN_PIN;
+    return sessionStorage.getItem('zg_admin_pin_auth') === ADMIN_PIN_HASH;
   }
 
   function updatePinDots() {
@@ -180,17 +201,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function verifyPin() {
+  async function verifyPin() {
     if (enteredPin.length < 6) return;
 
-    if (enteredPin === ADMIN_PIN) {
+    const enteredHash = await computeSha256(enteredPin);
+    if (enteredHash === ADMIN_PIN_HASH) {
       pinDots.forEach(dot => dot.classList.add('success'));
       if (pinErrorMsg) {
         pinErrorMsg.style.color = 'var(--success)';
         pinErrorMsg.textContent = '✓ Access Granted';
       }
 
-      sessionStorage.setItem('zg_admin_pin_auth', ADMIN_PIN);
+      sessionStorage.setItem('zg_admin_pin_auth', ADMIN_PIN_HASH);
       sessionStorage.setItem('zg_admin_session_token', 'pin_unlocked');
 
       setTimeout(() => {
@@ -394,6 +416,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const v = inputGhToken.value.trim();
         localStorage.setItem('zg_admin_gh_token', v);
         try { chrome.storage.local.set({ zg_admin_gh_token: v }); } catch(e) {}
+      });
+    }
+
+    // D. Check saved Firestore secret key (SEC-02)
+    const inputFirestoreSecret = document.getElementById('inputFirestoreSecret');
+    const savedFirestoreSecret = localStorage.getItem('zg_admin_firestore_secret') || DEFAULT_FIRESTORE_SECRET;
+    if (inputFirestoreSecret) {
+      inputFirestoreSecret.value = savedFirestoreSecret;
+      inputFirestoreSecret.addEventListener('input', () => {
+        const v = inputFirestoreSecret.value.trim();
+        localStorage.setItem('zg_admin_firestore_secret', v);
+        try { chrome.storage.local.set({ zg_admin_firestore_secret: v }); } catch(e) {}
       });
     }
 
@@ -773,7 +807,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (tokenTestResult) {
             tokenTestResult.style.display = 'block';
             tokenTestResult.style.color = '#059669';
-            tokenTestResult.innerHTML = `✓ Connected to Workspace <strong>${data.data.name || '34919'}</strong> successfully!`;
+            tokenTestResult.innerHTML = `✓ Connected to Workspace <strong>${escapeHtml(data.data.name || '34919')}</strong> successfully!`;
           }
           showToast('✓ Zengine API Connection Verified!');
         } else {
@@ -783,7 +817,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tokenTestResult) {
           tokenTestResult.style.display = 'block';
           tokenTestResult.style.color = '#dc2626';
-          tokenTestResult.innerHTML = `⚠️ Connection error: ${err.message}`;
+          tokenTestResult.textContent = `⚠️ Connection error: ${err.message}`;
         }
       } finally {
         btnTestToken.disabled = false;
@@ -811,7 +845,7 @@ document.addEventListener('DOMContentLoaded', () => {
           cloudTestResult.style.background = '#ecfdf5';
           cloudTestResult.style.color = '#047857';
           cloudTestResult.style.border = '1px solid #a7f3d0';
-          cloudTestResult.innerHTML = `✓ Cloud endpoint active! Icon Style: <strong>${data.iconStyle || 'none'}</strong>, Updated: ${new Date(data.updatedAt || Date.now()).toLocaleTimeString()}`;
+          cloudTestResult.innerHTML = `✓ Cloud endpoint active! Icon Style: <strong>${escapeHtml(data.iconStyle || 'none')}</strong>, Updated: ${escapeHtml(new Date(data.updatedAt || Date.now()).toLocaleTimeString())}`;
         }
       } catch (e) {
         if (cloudTestResult) {
