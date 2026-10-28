@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy • Zengine Power-Tools</title>
+  <link rel="stylesheet" href="admin.css">
+  <style>
+    body {
+      background: #f8fafc;
+      color: #1e293b;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 40px 20px;
+    }
+    .privacy-container {
+      max-width: 780px;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 40px 48px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    }
+    .privacy-header {
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 24px;
+      margin-bottom: 28px;
+    }
+    .privacy-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 8px 0;
+    }
+    .privacy-subtitle {
+      font-size: 14px;
+      color: #64748b;
+      margin: 0;
+    }
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 28px 0 12px 0;
+    }
+    p, li {
+      font-size: 14px;
+      color: #475569;
+    }
+    ul {
+      padding-left: 20px;
+      margin: 10px 0;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      background: #ecfdf5;
+      color: #059669;
+      border: 1px solid #a7f3d0;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .contact-box {
+      margin-top: 36px;
+      padding: 20px;
+      background: #f1f5f9;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #475569;
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 24px;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="privacy-container">
+    <div class="privacy-header">
+      <div class="badge">Enterprise Extension Policy</div>
+      <h1 class="privacy-title">Privacy Policy for Zengine Power-Tools</h1>
+      <p class="privacy-subtitle">Last updated: October 28, 2026 • Version 1.8.31</p>
+    </div>
+
+    <h2>1. Overview</h2>
+    <p><strong>Zengine Power-Tools</strong> is a private productivity and navigation browser extension engineered specifically for authorized staff members of the <strong>George Snow Scholarship Fund</strong> interacting with Zengine HQ (<code>platform.zenginehq.com</code>). We prioritize data privacy, operational security, and confidentiality.</p>
+
+    <h2>2. Information Collection and Handling</h2>
+    <p>Zengine Power-Tools operates under a strict <strong>Zero Data Harvesting</strong> architecture:</p>
+    <ul>
+      <li><strong>No Personal Data Collection:</strong> The extension does not collect, track, log, or sell any personal identifying information, student records, banking data, or browsing history.</li>
+      <li><strong>Local Session Authentication:</strong> To perform authorized searches and navigate disbursement forms, the extension reads the active user's existing session token directly from the authenticated Zengine browser tab. This token is used strictly within the user's local browser context to communicate directly with Zengine's authorized API.</li>
+      <li><strong>No External Transmission:</strong> Session tokens and student records are never transmitted to any third-party server, tracking service, or external analytics provider.</li>
+    </ul>
+
+    <h2>3. Browser Permissions & Storage</h2>
+    <p>The extension requests only the minimum permissions required for operation:</p>
+    <ul>
+      <li><strong>Storage:</strong> Used to save staff user interface preferences (such as keyboard shortcut rebindings and search display size) in local browser storage (<code>chrome.storage.local</code> / <code>chrome.storage.sync</code>).</li>
+      <li><strong>ActiveTab & Scripting:</strong> Used to inject keyboard navigation listeners and assistive side-panel helpers solely on authorized Zengine domains (<code>*.zenginehq.com</code>).</li>
+      <li><strong>Host Permissions:</strong> Strictly scoped to Zengine API endpoints and secure organizational configuration synchronization.</li>
+    </ul>
+
+    <h2>4. Third-Party Sharing</h2>
+    <p>We do not share, sell, rent, or monetize any user data or institutional records under any circumstances. The extension does not contain third-party advertising, telemetry libraries, or marketing trackers.</p>
+
+    <h2>5. Scope and Workspace Restrictions</h2>
+    <p>The extension enforces strict organizational workspace boundaries and remains dormant when navigating outside authorized operational workspaces.</p>
+
+    <div class="contact-box">
+      <strong>Contact & Inquiries:</strong><br>
+      For questions regarding this privacy policy or administrative configuration, please contact the George Snow Scholarship Fund technical administration team at <code>jcontreras@scholarship.org</code>.
+    </div>
+
+    <a href="index.html" class="back-link">← Return to Admin Portal</a>
+  </div>
+</body>
+</html>
